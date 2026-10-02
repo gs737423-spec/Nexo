@@ -114,6 +114,7 @@
   @keyframes ambientDrift { from { transform:translate3d(-8px,-4px,0); } to { transform:translate3d(10px,7px,0); } }
   @keyframes ambientPulse { 0%,100% { transform:scale(.96); opacity:.48; } 50% { transform:scale(1.04); opacity:.8; } }
   @keyframes ambientBeam { from { transform:translate3d(-8vw,-3vh,0) rotate(-12deg); opacity:.45; } to { transform:translate3d(9vw,4vh,0) rotate(-12deg); opacity:.9; } }
+  @keyframes loginSpin { to { transform:rotate(360deg); } }
   .page-enter { animation:pageEnter .22s ease-out both; }
   .login-shell { min-height:100vh; display:flex; align-items:center; justify-content:center; padding:28px 20px; overflow:hidden; isolation:isolate; background:#100E13; }
   .login-shell::before { content:""; position:absolute; z-index:-2; inset:0; background:radial-gradient(620px 430px at 12% 12%,rgba(116,14,170,.24),transparent 68%),radial-gradient(560px 400px at 90% 84%,rgba(23,90,67,.16),transparent 70%); }
@@ -127,6 +128,7 @@
   .login-field input { width:100%; min-height:48px; padding:13px 14px; border:1px solid rgba(191,174,205,.19); border-radius:15px; outline:none; background:rgba(8,12,18,.68); color:#F7F4FA; font-size:13px; font-weight:520; }
   .login-field input::placeholder { color:#766E7D; }
   .login-field input:focus { border-color:#A717F4 !important; box-shadow:0 0 0 4px rgba(167,23,244,.14) !important; }
+  .login-field input:-webkit-autofill, .login-field input:-webkit-autofill:hover, .login-field input:-webkit-autofill:focus { -webkit-text-fill-color:#F7F4FA; -webkit-box-shadow:0 0 0 1000px #17131B inset; box-shadow:0 0 0 1000px #17131B inset; caret-color:#F7F4FA; transition:background-color 9999s ease-out 0s; }
   .login-password-wrap { position:relative; }
   .login-password-wrap input { padding-right:76px; }
   .login-password-wrap button { position:absolute; right:8px; top:8px; height:32px; padding:0 9px; border:1px solid transparent; border-radius:10px; background:transparent; color:#B7AABD; font-size:10px; font-weight:700; }
@@ -134,6 +136,7 @@
   .login-submit { width:100%; min-height:48px; margin-top:8px; padding:12px; border:1px solid rgba(255,255,255,.14); border-radius:15px; background:linear-gradient(105deg,#A800EF,#7410B3); color:#fff; font-size:13px; font-weight:760; letter-spacing:-.015em; box-shadow:0 12px 25px rgba(138,0,224,.24),inset 0 1px 0 rgba(255,255,255,.22); }
   .login-submit:hover { background:linear-gradient(105deg,#B91DFF,#8111C3); box-shadow:0 15px 30px rgba(138,0,224,.32); transform:translateY(-1px); }
   .login-submit:disabled { cursor:wait; opacity:.72; box-shadow:none; }
+  .login-submit-loading { display:inline-block; width:13px; height:13px; margin-right:8px; vertical-align:-2px; border:2px solid rgba(255,255,255,.35); border-top-color:#fff; border-radius:50%; animation:loginSpin .72s linear infinite; }
   .login-error { margin-bottom:18px; padding:11px 13px; border:1px solid rgba(255,108,126,.31); border-radius:14px; background:rgba(91,25,35,.31); color:#FFB2BA; font-size:11px; font-weight:560; line-height:1.4; }
   @media (max-width:480px) { .login-shell { padding:18px; align-items:center; } .login-card { padding:27px 22px 24px; border-radius:24px; } .login-brand { margin-bottom:24px; } .login-brand-title { font-size:23px; } }
   .kpi-grid > button { animation:glowIn .32s ease-out both; } .kpi-grid > button:nth-child(2){animation-delay:.04s}.kpi-grid > button:nth-child(3){animation-delay:.08s}.kpi-grid > button:nth-child(4){animation-delay:.12s}
@@ -464,7 +467,7 @@ function renderLogin(){
       '<form onsubmit="window.doLogin(event)">'+
         '<div class="login-field"><label for="loginEmail">E-mail</label><input id="loginEmail" type="email" autocomplete="email" required></div>'+ 
         '<div class="login-field"><label for="loginPassword">Senha</label><div class="login-password-wrap"><input id="loginPassword" type="'+(state.showPassword?'text':'password')+'" autocomplete="current-password" required><button type="button" onclick="window.togglePassword()">'+(state.showPassword?'Ocultar':'Mostrar')+'</button></div></div>'+ 
-        '<button class="login-submit" type="submit" '+(state.loginLoading?'disabled':'')+'>'+(state.loginLoading?'Entrando...':'Entrar na plataforma')+'</button>'+
+        '<button class="login-submit" type="submit" aria-busy="'+(state.loginLoading?'true':'false')+'" '+(state.loginLoading?'disabled':'')+'>'+(state.loginLoading?'<span class="login-submit-loading"></span>Conectando...':'Entrar na plataforma')+'</button>'+
       '</form>'+
     '</div></div>';
 }
@@ -776,10 +779,11 @@ function render(){
 
 window.doLogin=async function(e){
   e.preventDefault(); var email=fieldValue('loginEmail',''), password=fieldValue('loginPassword',''); state.apiError=''; state.loginLoading=true; render();
+  var emailInput=document.getElementById('loginEmail'), passwordInput=document.getElementById('loginPassword'); if(emailInput) emailInput.value=email; if(passwordInput) passwordInput.value=password;
   try {
     state.session=await api('/auth/login',jsonOptions({email:email,password:password}));
     await loadData(); state.loggedIn=true; render();
-  } catch(error) { state.apiError=error.message; state.loginLoading=false; render(); }
+  } catch(error) { state.apiError=error.message; state.loginLoading=false; render(); var failedEmail=document.getElementById('loginEmail'), failedPassword=document.getElementById('loginPassword'); if(failedEmail) failedEmail.value=email; if(failedPassword) failedPassword.value=password; }
 };
 window.togglePassword=function(){ var email=fieldValue('loginEmail',''), password=fieldValue('loginPassword',''); state.showPassword=!state.showPassword; render(); var emailInput=document.getElementById('loginEmail'), passwordInput=document.getElementById('loginPassword'); if(emailInput) emailInput.value=email; if(passwordInput){ passwordInput.value=password; passwordInput.focus(); } };
 window.toggleAccountMenu=function(){ state.accountMenu=!state.accountMenu; render(); };
