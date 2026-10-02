@@ -614,7 +614,7 @@ function renderDashboard(){
   var rows=computeRows();
   var rowsHtml=rows.map(function(inv){
     var c=getCarrier(inv.carrierId), s=themedStatus(inv.status,SC[inv.status]||SC.SEM_INFORMACAO), due=deadlineInfo(inv.eta), dueStyle=state.theme==='dark'?'background:'+due.bg+';color:'+due.color:'color:'+(due.key==='late'?'#B42318':due.key==='today'?'#B54708':due.key==='soon'?'#1769E0':'#027A48');
-    return '<div class="invoice-row invoice-table-grid" onclick="window.goToDetail('+inv.id+')" style="height:61px;padding:10px 20px;border-bottom:1px solid #F3F4F6;cursor:pointer;align-items:center;gap:12px;overflow:hidden" onmouseover="this.style.background=state.theme===\'dark\'?\'#1C181F\':\'#F9FAFB\'" onmouseout="this.style.background=\'\'">'+
+    return '<div class="invoice-row invoice-table-grid" onclick="window.goToDetail('+inv.id+')" style="display:grid;height:61px;padding:10px 20px;border-bottom:1px solid #F3F4F6;cursor:pointer;align-items:center;gap:12px;overflow:hidden" onmouseover="this.style.background=state.theme===\'dark\'?\'#1C181F\':\'#F9FAFB\'" onmouseout="this.style.background=\'\'">'+
       '<div style="font-size:13px;font-weight:700">'+esc(inv.nf)+'</div>'+
       '<div style="font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+esc(inv.recipient)+'</div>'+
       '<div style="font-size:12.5px;font-weight:500;color:#667085;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+esc(c.name)+'</div>'+
