@@ -324,32 +324,32 @@
   .rca-invoice-row > div:first-child { font-size:12px !important; }
   @media (max-width:700px) { .stage-update { align-items:stretch; } .stage-copy { width:100%; } .stage-options { flex-basis:100%; } .stage-note { min-width:0; } .stage-save { flex:1 1 auto; } }
   /* Editorial type and table grid: one deliberate system across the product. */
-  :root { --invoice-grid: 88px minmax(220px,1fr) 150px 132px 88px 104px 92px; }
-  html, body, #root, #root input, #root select, #root textarea { font-family:"Trebuchet MS","Segoe UI",sans-serif !important; }
-  #root h1, #root h2, #root h3, #root nav, #root button, #root .kpi-value { font-family:"Arial Rounded MT Bold","Trebuchet MS","Segoe UI",sans-serif !important; }
-  #root h1 { font-size:27px !important; line-height:1.08 !important; font-weight:700 !important; letter-spacing:-.025em !important; }
-  #root h2 { font-size:16px !important; line-height:1.25 !important; font-weight:700 !important; letter-spacing:-.01em !important; }
-  #root nav button { font-size:13px !important; font-weight:700 !important; letter-spacing:0 !important; }
-  #root .kpi-label { font-size:11px !important; line-height:1.25 !important; font-weight:700 !important; letter-spacing:.01em !important; text-transform:none !important; }
-  #root .kpi-value { font-size:31px !important; line-height:1 !important; font-weight:700 !important; letter-spacing:-.025em !important; font-variant-numeric:tabular-nums; }
-  #root .table-header { grid-template-columns:var(--invoice-grid) !important; font-size:11px !important; line-height:1.2 !important; font-weight:600 !important; letter-spacing:0 !important; text-transform:none !important; }
-  #root .invoice-row { grid-template-columns:var(--invoice-grid) !important; min-width:0; font-size:13px !important; line-height:1.3 !important; }
+  :root { --invoice-grid:repeat(7,minmax(0,1fr)); }
+  html, body, #root, #root input, #root select, #root textarea { font-family:'Sora',system-ui,sans-serif !important; font-weight:600; }
+  #root h1, #root h2, #root h3, #root nav, #root button, #root .kpi-value { font-family:'Sora',system-ui,sans-serif !important; }
+  #root h1 { font-size:28px !important; line-height:1.08 !important; font-weight:800 !important; letter-spacing:-.04em !important; }
+  #root h2 { font-size:17px !important; line-height:1.2 !important; font-weight:800 !important; letter-spacing:-.025em !important; }
+  #root nav button { font-size:13px !important; font-weight:700 !important; letter-spacing:-.01em !important; }
+  #root .kpi-label { font-size:11px !important; line-height:1.25 !important; font-weight:700 !important; letter-spacing:.015em !important; text-transform:none !important; }
+  #root .kpi-value { font-size:32px !important; line-height:1 !important; font-weight:800 !important; letter-spacing:-.045em !important; font-variant-numeric:tabular-nums; }
+  #root .table-header { grid-template-columns:var(--invoice-grid) !important; font-size:11px !important; line-height:1.2 !important; font-weight:700 !important; letter-spacing:0 !important; text-transform:none !important; }
+  #root .invoice-row { grid-template-columns:var(--invoice-grid) !important; min-width:0; font-size:13px !important; line-height:1.3 !important; font-weight:600 !important; }
   #root .table-header > div, #root .table-header > button, #root .invoice-row > div { text-align:left !important; }
-  #root .table-header > :nth-child(n+5), #root .invoice-row > :nth-child(n+5) { text-align:center !important; }
-  #root .invoice-row > div:first-child { font-weight:650 !important; letter-spacing:0 !important; font-variant-numeric:tabular-nums; }
+  #root .invoice-row > :nth-child(n+1) { text-align:left !important; }
+  #root .invoice-row > div:first-child { font-weight:800 !important; letter-spacing:-.015em !important; font-variant-numeric:tabular-nums; }
   #root .invoice-row > div:nth-child(2) { font-weight:700 !important; }
-  #root .invoice-row > div:nth-child(3), #root .invoice-row > div:nth-child(6), #root .invoice-row > div:nth-child(7) { font-weight:400 !important; color:#9B93A3 !important; }
-  #root .table-header > button { justify-self:center; }
-  #root .table-min-width { min-width:980px; }
+  #root .invoice-row > div:nth-child(3), #root .invoice-row > div:nth-child(6), #root .invoice-row > div:nth-child(7) { font-weight:500 !important; color:#AAA1B0 !important; }
+  #root .table-header > button { justify-self:start; }
+  #root .table-min-width { min-width:1050px; }
   #root .data-table > div:first-child { padding:14px 20px 10px !important; }
   #root .data-table > div:first-child > div:first-child { font-size:13px !important; font-weight:600 !important; color:#D7D0DA !important; }
   #root .data-table > div:first-child > div:last-child { font-size:11px !important; color:#8E8596 !important; }
   html[data-theme="dark"] .table-header { background:rgba(14,13,16,.72) !important; border-color:#332E36 !important; }
   html[data-theme="dark"] .invoice-row { border-color:#2B2730 !important; background:transparent !important; }
   html[data-theme="dark"] .invoice-row:hover { background:rgba(161,0,255,.075) !important; }
-  html[data-theme="dark"] .kpi-card .kpi-label { font-size:11px !important; font-weight:700 !important; letter-spacing:.01em !important; }
-  html[data-theme="dark"] .kpi-card .kpi-value { font-size:31px !important; font-weight:700 !important; letter-spacing:-.025em !important; }
-  @media (max-width:900px) { :root { --invoice-grid:80px minmax(190px,1fr) 140px 126px 84px 98px 88px; } #root .table-min-width { min-width:920px; } }
+  html[data-theme="dark"] .kpi-card .kpi-label { font-size:11px !important; font-weight:700 !important; letter-spacing:.015em !important; }
+  html[data-theme="dark"] .kpi-card .kpi-value { font-size:32px !important; font-weight:800 !important; letter-spacing:-.045em !important; }
+  @media (max-width:900px) { #root .table-min-width { min-width:920px; } }
 </style>
 </head>
 <body>
