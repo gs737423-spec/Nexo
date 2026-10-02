@@ -115,22 +115,32 @@
   @keyframes ambientPulse { 0%,100% { transform:scale(.96); opacity:.48; } 50% { transform:scale(1.04); opacity:.8; } }
   @keyframes ambientBeam { from { transform:translate3d(-8vw,-3vh,0) rotate(-12deg); opacity:.45; } to { transform:translate3d(9vw,4vh,0) rotate(-12deg); opacity:.9; } }
   .page-enter { animation:pageEnter .22s ease-out both; }
-  .login-shell { min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px; background:#0B0B0D; }
-  .login-card { width:100%; max-width:336px; padding:30px 28px 28px; }
-  .login-brand { text-align:center; margin-bottom:30px; }
-  .login-brand-mark { display:inline-flex; align-items:center; justify-content:center; width:40px; height:40px; margin-bottom:14px; border-radius:13px; background:linear-gradient(145deg,#9B12F2,#5B087F); color:#fff; font-size:15px; font-weight:700; box-shadow:0 8px 22px rgba(139,0,230,.22); }
-  .login-brand-title { font-size:24px; font-weight:650; letter-spacing:-.045em; color:#F7F4FA; }
-  .login-brand-subtitle { margin-top:6px; color:#8E8896; font-size:12px; font-weight:450; }
-  .login-field { margin-bottom:16px; }
-  .login-field label { display:block; margin:0 0 7px 2px; color:#A9A2AF; font-size:11px; font-weight:500; }
-  .login-field input { width:100%; padding:12px 13px; border:1px solid #302B35; border-radius:11px; outline:none; background:#151316; color:#F7F4FA; font-size:13px; }
-  .login-field input:focus { border-color:#8B00E6 !important; box-shadow:0 0 0 3px rgba(139,0,230,.12) !important; }
+  .login-shell { min-height:100vh; display:flex; align-items:center; justify-content:center; padding:28px 20px; overflow:hidden; isolation:isolate; background:#09090B; }
+  .login-shell::before { content:""; position:absolute; z-index:-2; inset:0; background:radial-gradient(540px 400px at 12% 16%,rgba(130,0,235,.20),transparent 68%),radial-gradient(520px 380px at 88% 82%,rgba(20,219,141,.11),transparent 66%),linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px); background-size:auto,auto,44px 44px,44px 44px; opacity:.88; }
+  .login-shell::after { content:""; position:absolute; z-index:-1; width:min(760px,82vw); height:230px; top:10%; border-radius:50%; background:linear-gradient(90deg,transparent,rgba(151,23,255,.17),rgba(28,215,141,.07),transparent); filter:blur(26px); transform:rotate(-12deg); }
+  .login-card { width:min(100%,420px); padding:34px; border:1px solid rgba(255,255,255,.13); border-radius:28px; background:linear-gradient(140deg,rgba(29,25,33,.87),rgba(14,14,17,.78)); box-shadow:0 28px 80px rgba(0,0,0,.46),inset 0 1px 0 rgba(255,255,255,.06); backdrop-filter:blur(18px); animation:glowIn .38s ease-out both; }
+  .login-brand { margin-bottom:27px; }
+  .login-brand-top { display:flex; align-items:center; gap:10px; margin-bottom:25px; }
+  .login-brand-mark { display:inline-flex; align-items:center; justify-content:center; width:42px; height:42px; border-radius:15px; background:linear-gradient(145deg,#B326FF,#6B0AAB); color:#fff; font-size:15px; font-weight:800; letter-spacing:-.08em; box-shadow:0 10px 26px rgba(149,18,236,.30),inset 0 1px 0 rgba(255,255,255,.3); }
+  .login-product-tag { color:#C7B9D0; font-size:10px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; }
+  .login-brand-title { font-size:30px; line-height:1.04; font-weight:760; letter-spacing:-.065em; color:#FBF8FD; }
+  .login-brand-subtitle { max-width:250px; margin-top:9px; color:#AFA6B6; font-size:12px; font-weight:500; line-height:1.55; }
+  .login-field { margin-bottom:17px; }
+  .login-field label { display:block; margin:0 0 8px 2px; color:#D1C8D7; font-size:11px; font-weight:680; letter-spacing:-.01em; }
+  .login-field input { width:100%; min-height:48px; padding:13px 14px; border:1px solid rgba(191,174,205,.19); border-radius:15px; outline:none; background:rgba(8,12,18,.68); color:#F7F4FA; font-size:13px; font-weight:520; }
+  .login-field input::placeholder { color:#766E7D; }
+  .login-field input:focus { border-color:#A717F4 !important; box-shadow:0 0 0 4px rgba(167,23,244,.14) !important; }
   .login-password-wrap { position:relative; }
-  .login-password-wrap input { padding-right:58px; }
-  .login-password-wrap button { position:absolute; right:8px; top:7px; border:0; background:transparent; color:#8E8896; font-size:11px; font-weight:550; }
-  .login-submit { width:100%; margin-top:7px; padding:12px; border:0; border-radius:11px; background:linear-gradient(135deg,#8B00E6,#6C0BA8); color:#fff; font-size:13px; font-weight:650; box-shadow:0 8px 20px rgba(139,0,230,.16); }
-  .login-submit:hover { background:linear-gradient(135deg,#9B12F2,#7B0FBA); transform:translateY(-1px); }
-  .login-error { margin-bottom:16px; padding:10px 12px; border:1px solid #5A2835; border-radius:10px; background:#211418; color:#FF9DA7; font-size:12px; }
+  .login-password-wrap input { padding-right:76px; }
+  .login-password-wrap button { position:absolute; right:8px; top:8px; height:32px; padding:0 9px; border:1px solid transparent; border-radius:10px; background:transparent; color:#B7AABD; font-size:10px; font-weight:700; }
+  .login-password-wrap button:hover { border-color:rgba(202,180,216,.16); background:rgba(255,255,255,.05); color:#fff; transform:none; }
+  .login-submit { width:100%; min-height:48px; margin-top:8px; padding:12px; border:1px solid rgba(255,255,255,.14); border-radius:15px; background:linear-gradient(105deg,#A800EF,#7410B3); color:#fff; font-size:13px; font-weight:760; letter-spacing:-.015em; box-shadow:0 12px 25px rgba(138,0,224,.24),inset 0 1px 0 rgba(255,255,255,.22); }
+  .login-submit:hover { background:linear-gradient(105deg,#B91DFF,#8111C3); box-shadow:0 15px 30px rgba(138,0,224,.32); transform:translateY(-1px); }
+  .login-submit:disabled { cursor:wait; opacity:.72; box-shadow:none; }
+  .login-security-note { display:flex; align-items:center; justify-content:center; gap:7px; margin-top:17px; color:#807689; font-size:10px; font-weight:560; }
+  .login-security-dot { width:6px; height:6px; border-radius:99px; background:#31D787; box-shadow:0 0 12px rgba(49,215,135,.7); }
+  .login-error { margin-bottom:18px; padding:11px 13px; border:1px solid rgba(255,108,126,.31); border-radius:14px; background:rgba(91,25,35,.31); color:#FFB2BA; font-size:11px; font-weight:560; line-height:1.4; }
+  @media (max-width:480px) { .login-shell { padding:18px; align-items:center; } .login-card { padding:27px 22px 24px; border-radius:24px; } .login-brand { margin-bottom:24px; } .login-brand-top { margin-bottom:22px; } .login-brand-title { font-size:27px; } }
   .kpi-grid > button { animation:glowIn .32s ease-out both; } .kpi-grid > button:nth-child(2){animation-delay:.04s}.kpi-grid > button:nth-child(3){animation-delay:.08s}.kpi-grid > button:nth-child(4){animation-delay:.12s}
   html[data-theme="dark"] body { background:#0B0B0D; color:#F7F4FA; }
   html[data-theme="dark"] body::before { opacity:.82; background:radial-gradient(760px 500px at 12% 0%,rgba(37,99,235,.34),transparent 68%),radial-gradient(680px 460px at 90% 76%,rgba(13,148,136,.22),transparent 68%),linear-gradient(118deg,transparent 0%,rgba(37,99,235,.08) 39%,rgba(13,148,136,.10) 50%,transparent 66%),linear-gradient(rgba(116,146,184,.10) 1px,transparent 1px),linear-gradient(90deg,rgba(116,146,184,.10) 1px,transparent 1px); background-size:auto,auto,180% 180%,42px 42px,42px 42px; }
@@ -453,15 +463,17 @@ function renderLogin(){
   return '<div class="login-shell">'+
     '<div class="login-card">'+
       '<div class="login-brand">'+
-        '<div class="login-brand-title">NEXO</div>'+ 
-        '<div class="login-brand-subtitle">Acesso interno</div>'+ 
+        '<div class="login-brand-top"><div class="login-brand-mark">NX</div><span class="login-product-tag">Operação conectada</span></div>'+
+        '<div class="login-brand-title">Bem-vindo à<br>NEXO.</div>'+
+        '<div class="login-brand-subtitle">Acesso interno para acompanhar sua operação de entregas em tempo real.</div>'+
       '</div>'+
       (state.apiError ? '<div class="login-error">'+esc(state.apiError)+'</div>' : '')+
       '<form onsubmit="window.doLogin(event)">'+
         '<div class="login-field"><label for="loginEmail">E-mail</label><input id="loginEmail" type="email" autocomplete="email" required></div>'+ 
         '<div class="login-field"><label for="loginPassword">Senha</label><div class="login-password-wrap"><input id="loginPassword" type="'+(state.showPassword?'text':'password')+'" autocomplete="current-password" required><button type="button" onclick="window.togglePassword()">'+(state.showPassword?'Ocultar':'Mostrar')+'</button></div></div>'+ 
-        '<button class="login-submit" type="submit" '+(state.loginLoading?'disabled':'')+'>'+(state.loginLoading?'Entrando...':'Entrar')+'</button>'+ 
+        '<button class="login-submit" type="submit" '+(state.loginLoading?'disabled':'')+'>'+(state.loginLoading?'Entrando...':'Entrar na plataforma')+'</button>'+
       '</form>'+
+      '<div class="login-security-note"><span class="login-security-dot"></span>Área segura para a sua equipe</div>'+
     '</div></div>';
 }
 
