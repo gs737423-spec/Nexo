@@ -22,14 +22,20 @@ function bearerToken(request) {
   return match ? match[1] : "";
 }
 
+function invoiceIdFrom(request, context) {
+  const params = context && context.params;
+  if (params && params.id) return Number(params.id);
+  const match = new URL(request.url).pathname.match(/^\/api\/invoices\/(\d+)\/status\/?$/);
+  return match ? Number(match[1]) : NaN;
+}
+
 export async function POST(request, context) {
   try {
+    const invoiceId = invoiceIdFrom(request, context);
+    if (!Number.isInteger(invoiceId) || invoiceId < 1) return json({ error: "Nota fiscal inválida." }, 422);
     if (!(process.env.DATABASE_URL || process.env.NEON_DATABASE_URL || process.env.POSTGRES_URL)) {
       return json({ error: "Banco de dados não configurado." }, 503);
     }
-    const params = await context.params;
-    const invoiceId = Number(params.id);
-    if (!Number.isInteger(invoiceId) || invoiceId < 1) return json({ error: "Nota fiscal inválida." }, 422);
     const body = await request.json().catch(() => null);
     const status = String(body?.status || "").trim();
     const note = String(body?.note || "").trim().slice(0, 300);
