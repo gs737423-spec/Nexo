@@ -11,7 +11,7 @@ const json = (body, status = 200) => new Response(JSON.stringify(body), {
 
 export async function POST(request) {
   try {
-    if (!process.env.DATABASE_URL) return json({ error: "Banco de dados não configurado." }, 503);
+    if (!(process.env.DATABASE_URL || process.env.NEON_DATABASE_URL || process.env.POSTGRES_URL)) return json({ error: "Banco de dados não configurado." }, 503);
     const body = await request.json();
     const email = String(body?.email || "").trim().toLowerCase();
     const password = String(body?.password || "");

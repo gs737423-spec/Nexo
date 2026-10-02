@@ -3,7 +3,7 @@
 const { neon } = require("@neondatabase/serverless");
 
 function databaseUrl() {
-  return process.env.DATABASE_URL || process.env.POSTGRES_URL || "";
+  return process.env.DATABASE_URL || process.env.NEON_DATABASE_URL || process.env.POSTGRES_URL || "";
 }
 
 function createDatabase() {

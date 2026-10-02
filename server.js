@@ -273,7 +273,7 @@ function createInvoice(store, body, user) {
 function createNexoServer(options = {}) {
   const dataFile = options.dataFile || path.join(__dirname, "data", "store.json");
   const indexFile = options.indexFile || path.join(__dirname, "index.html");
-  const database = options.database || (process.env.DATABASE_URL ? createDatabase() : null);
+  const database = options.database || ((process.env.DATABASE_URL || process.env.NEON_DATABASE_URL || process.env.POSTGRES_URL) ? createDatabase() : null);
   const localAuth = createAuthService({ dataDirectory: path.dirname(dataFile) });
   const auth = options.authService || (database ? createDatabaseAuthService({ database }) : localAuth);
   const tracking = options.trackingService || createTrackingService();

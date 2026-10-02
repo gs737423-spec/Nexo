@@ -10,7 +10,7 @@ const json = (body, status = 200) => new Response(JSON.stringify(body), {
 });
 
 export async function GET() {
-  if (!process.env.DATABASE_URL) return json({ status: "ok", databaseConfigured: false, authConfigured: false });
+  if (!(process.env.DATABASE_URL || process.env.NEON_DATABASE_URL || process.env.POSTGRES_URL)) return json({ status: "ok", databaseConfigured: false, authConfigured: false });
   try {
     const database = createDatabase();
     await database.initialize();
