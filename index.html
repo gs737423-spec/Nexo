@@ -115,6 +115,22 @@
   @keyframes ambientPulse { 0%,100% { transform:scale(.96); opacity:.48; } 50% { transform:scale(1.04); opacity:.8; } }
   @keyframes ambientBeam { from { transform:translate3d(-8vw,-3vh,0) rotate(-12deg); opacity:.45; } to { transform:translate3d(9vw,4vh,0) rotate(-12deg); opacity:.9; } }
   .page-enter { animation:pageEnter .22s ease-out both; }
+  .login-shell { min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px; background:#0B0B0D; }
+  .login-card { width:100%; max-width:336px; padding:30px 28px 28px; }
+  .login-brand { text-align:center; margin-bottom:30px; }
+  .login-brand-mark { display:inline-flex; align-items:center; justify-content:center; width:40px; height:40px; margin-bottom:14px; border-radius:13px; background:linear-gradient(145deg,#9B12F2,#5B087F); color:#fff; font-size:15px; font-weight:700; box-shadow:0 8px 22px rgba(139,0,230,.22); }
+  .login-brand-title { font-size:24px; font-weight:650; letter-spacing:-.045em; color:#F7F4FA; }
+  .login-brand-subtitle { margin-top:6px; color:#8E8896; font-size:12px; font-weight:450; }
+  .login-field { margin-bottom:16px; }
+  .login-field label { display:block; margin:0 0 7px 2px; color:#A9A2AF; font-size:11px; font-weight:500; }
+  .login-field input { width:100%; padding:12px 13px; border:1px solid #302B35; border-radius:11px; outline:none; background:#151316; color:#F7F4FA; font-size:13px; }
+  .login-field input:focus { border-color:#8B00E6 !important; box-shadow:0 0 0 3px rgba(139,0,230,.12) !important; }
+  .login-password-wrap { position:relative; }
+  .login-password-wrap input { padding-right:58px; }
+  .login-password-wrap button { position:absolute; right:8px; top:7px; border:0; background:transparent; color:#8E8896; font-size:11px; font-weight:550; }
+  .login-submit { width:100%; margin-top:7px; padding:12px; border:0; border-radius:11px; background:linear-gradient(135deg,#8B00E6,#6C0BA8); color:#fff; font-size:13px; font-weight:650; box-shadow:0 8px 20px rgba(139,0,230,.16); }
+  .login-submit:hover { background:linear-gradient(135deg,#9B12F2,#7B0FBA); transform:translateY(-1px); }
+  .login-error { margin-bottom:16px; padding:10px 12px; border:1px solid #5A2835; border-radius:10px; background:#211418; color:#FF9DA7; font-size:12px; }
   .kpi-grid > button { animation:glowIn .32s ease-out both; } .kpi-grid > button:nth-child(2){animation-delay:.04s}.kpi-grid > button:nth-child(3){animation-delay:.08s}.kpi-grid > button:nth-child(4){animation-delay:.12s}
   html[data-theme="dark"] body { background:#0B0B0D; color:#F7F4FA; }
   html[data-theme="dark"] body::before { opacity:.82; background:radial-gradient(760px 500px at 12% 0%,rgba(37,99,235,.34),transparent 68%),radial-gradient(680px 460px at 90% 76%,rgba(13,148,136,.22),transparent 68%),linear-gradient(118deg,transparent 0%,rgba(37,99,235,.08) 39%,rgba(13,148,136,.10) 50%,transparent 66%),linear-gradient(rgba(116,146,184,.10) 1px,transparent 1px),linear-gradient(90deg,rgba(116,146,184,.10) 1px,transparent 1px); background-size:auto,auto,180% 180%,42px 42px,42px 42px; }
@@ -358,19 +374,17 @@ var ICON_CLOCK='<svg width="23" height="23" viewBox="0 0 24 24" fill="none" stro
 var ICON_WARNING='<svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m10.3 3.9-8.5 14A2 2 0 0 0 3.5 21h17a2 2 0 0 0 1.7-3.1l-8.5-14a2 2 0 0 0-3.4 0Z"></path><path d="M12 9v4"></path><path d="M12 17h.01"></path></svg>';
 
 function renderLogin(){
-  return '<div style="min-height:100vh;display:flex;align-items:center;justify-content:center">'+
-    '<div style="width:100%;max-width:360px;padding:32px">'+
-      '<div style="text-align:center;margin-bottom:36px">'+
-        '<div style="font-size:26px;font-weight:800;letter-spacing:-0.04em">NEXO</div>'+
-        '<div style="font-size:13px;color:#667085;margin-top:5px;font-weight:500">Acesso interno</div>'+
+  return '<div class="login-shell">'+
+    '<div class="login-card">'+
+      '<div class="login-brand">'+
+        '<div class="login-brand-title">NEXO</div>'+ 
+        '<div class="login-brand-subtitle">Acesso interno</div>'+ 
       '</div>'+
-      (state.apiError ? '<div style="margin-bottom:14px;padding:10px 12px;background:#FEF2F2;border:1px solid #FECACA;border-radius:8px;color:#991B1B;font-size:12.5px">'+esc(state.apiError)+'</div>' : '')+
+      (state.apiError ? '<div class="login-error">'+esc(state.apiError)+'</div>' : '')+
       '<form onsubmit="window.doLogin(event)">'+
-        '<div style="margin-bottom:14px"><label style="display:block;font-size:13px;font-weight:500;color:#344054;margin-bottom:5px">E-mail</label>'+
-        '<input id="loginEmail" type="email" autocomplete="email" required style="width:100%;padding:9px 12px;border:1px solid #E5E7EB;border-radius:8px;font-size:14px;outline:none;background:#fff"></div>'+
-        '<div style="margin-bottom:24px"><label style="display:block;font-size:13px;font-weight:500;color:#344054;margin-bottom:5px">Senha</label>'+
-        '<div style="position:relative"><input id="loginPassword" type="'+(state.showPassword?'text':'password')+'" autocomplete="current-password" required style="width:100%;padding:9px 52px 9px 12px;border:1px solid #E5E7EB;border-radius:8px;font-size:14px;outline:none;background:#fff"><button type="button" onclick="window.togglePassword()" style="position:absolute;right:8px;top:7px;border:none;background:transparent;color:#526078;font-size:12px;font-weight:600">'+(state.showPassword?'Ocultar':'Mostrar')+'</button></div></div>'+
-        '<button type="submit" '+(state.loginLoading?'disabled':'')+' style="width:100%;padding:10px;background:#111827;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600">'+(state.loginLoading?'Entrando...':'Entrar')+'</button>'+
+        '<div class="login-field"><label for="loginEmail">E-mail</label><input id="loginEmail" type="email" autocomplete="email" required></div>'+ 
+        '<div class="login-field"><label for="loginPassword">Senha</label><div class="login-password-wrap"><input id="loginPassword" type="'+(state.showPassword?'text':'password')+'" autocomplete="current-password" required><button type="button" onclick="window.togglePassword()">'+(state.showPassword?'Ocultar':'Mostrar')+'</button></div></div>'+ 
+        '<button class="login-submit" type="submit" '+(state.loginLoading?'disabled':'')+'>'+(state.loginLoading?'Entrando...':'Entrar')+'</button>'+ 
       '</form>'+
     '</div></div>';
 }
