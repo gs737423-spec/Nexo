@@ -1,0 +1,667 @@
+{
+  "carriers": [
+    {
+      "id": 1,
+      "name": "Jamef",
+      "phone": "(31) 2121-9090",
+      "email": "sac@jamef.com.br",
+      "website": "https://www.jamef.com.br"
+    },
+    {
+      "id": 2,
+      "name": "Braspress",
+      "phone": "(11) 2188-9000",
+      "email": "faleconosco@braspress.com",
+      "website": "https://www.braspress.com.br"
+    },
+    {
+      "id": 3,
+      "name": "Rodonaves",
+      "phone": "(17) 2137-1500",
+      "email": "sac@rodonaves.com.br",
+      "website": "https://www.rodonaves.com.br"
+    },
+    {
+      "id": 4,
+      "name": "Correios",
+      "phone": "0800 725 7282",
+      "email": "",
+      "website": "https://www.correios.com.br"
+    }
+  ],
+  "invoices": [
+    {
+      "id": 1,
+      "nf": "104928",
+      "series": "1",
+      "order": "PED-8847",
+      "issued": "2026-09-08",
+      "issuer": "Indústria Nova Ltda",
+      "recipient": "Mercado ABC",
+      "recipientDoc": "98.765.432/0001-10",
+      "city": "Rio de Janeiro",
+      "state": "RJ",
+      "value": 4580,
+      "carrierId": 1,
+      "status": "EM_TRANSITO",
+      "tracking": "JMF9283746",
+      "eta": "2026-09-11",
+      "lastCheck": "2026-09-10T08:32:00",
+      "by": "Gabriel",
+      "events": [
+        {
+          "s": "NOTA_CADASTRADA",
+          "l": "Nota cadastrada",
+          "d": "2026-09-08T09:34:00",
+          "loc": ""
+        },
+        {
+          "s": "COLETADO",
+          "l": "Mercadoria coletada",
+          "d": "2026-09-08T17:20:00",
+          "loc": "São Paulo/SP"
+        },
+        {
+          "s": "EM_TRANSITO",
+          "l": "Em transferência",
+          "d": "2026-09-09T04:10:00",
+          "loc": "Resende/RJ"
+        },
+        {
+          "s": "UNIDADE_DESTINO",
+          "l": "Unidade Rio de Janeiro",
+          "d": "2026-09-10T07:43:00",
+          "loc": "Rio de Janeiro/RJ"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "nf": "105012",
+      "series": "1",
+      "order": "PED-9034",
+      "issued": "2026-09-06",
+      "issuer": "Metalúrgica São Paulo",
+      "recipient": "Farmácia Popular",
+      "recipientDoc": "12.456.789/0001-55",
+      "city": "Curitiba",
+      "state": "PR",
+      "value": 2150,
+      "carrierId": 3,
+      "status": "ATRASADO",
+      "tracking": "RDN7482910",
+      "eta": "2026-09-08",
+      "lastCheck": "2026-09-09T18:42:00",
+      "by": "Ana",
+      "events": [
+        {
+          "s": "NOTA_CADASTRADA",
+          "l": "Nota cadastrada",
+          "d": "2026-09-06T10:15:00",
+          "loc": ""
+        },
+        {
+          "s": "COLETADO",
+          "l": "Mercadoria coletada",
+          "d": "2026-09-06T16:00:00",
+          "loc": "São Paulo/SP"
+        },
+        {
+          "s": "EM_TRANSITO",
+          "l": "Em trânsito",
+          "d": "2026-09-07T03:20:00",
+          "loc": "Registro/SP"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "nf": "104756",
+      "series": "2",
+      "order": "PED-8790",
+      "issued": "2026-09-07",
+      "issuer": "Distribuidora Norte",
+      "recipient": "Casa & Conforto",
+      "recipientDoc": "34.567.890/0001-88",
+      "city": "São Paulo",
+      "state": "SP",
+      "value": 890,
+      "carrierId": 4,
+      "status": "SAIU_PARA_ENTREGA",
+      "tracking": "SS987654321BR",
+      "eta": "2026-09-10",
+      "lastCheck": "2026-09-10T06:15:00",
+      "by": "Gabriel",
+      "events": [
+        {
+          "s": "NOTA_CADASTRADA",
+          "l": "Nota cadastrada",
+          "d": "2026-09-07T14:20:00",
+          "loc": ""
+        },
+        {
+          "s": "COLETADO",
+          "l": "Objeto postado",
+          "d": "2026-09-07T17:45:00",
+          "loc": "Campinas/SP"
+        },
+        {
+          "s": "EM_TRANSITO",
+          "l": "Em trânsito",
+          "d": "2026-09-08T05:30:00",
+          "loc": "Jundiaí/SP"
+        },
+        {
+          "s": "UNIDADE_DESTINO",
+          "l": "Unidade de distribuição",
+          "d": "2026-09-09T22:10:00",
+          "loc": "São Paulo/SP"
+        },
+        {
+          "s": "SAIU_PARA_ENTREGA",
+          "l": "Saiu para entrega",
+          "d": "2026-09-10T06:15:00",
+          "loc": "São Paulo/SP"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "nf": "103847",
+      "series": "1",
+      "order": "PED-8612",
+      "issued": "2026-09-04",
+      "issuer": "Química Global",
+      "recipient": "Distribuidora Silva",
+      "recipientDoc": "56.789.012/0001-33",
+      "city": "Belo Horizonte",
+      "state": "MG",
+      "value": 7320,
+      "carrierId": 2,
+      "status": "ENTREGUE",
+      "tracking": "BRP4829103",
+      "eta": "2026-09-07",
+      "lastCheck": "2026-09-07T14:20:00",
+      "by": "Ana",
+      "events": [
+        {
+          "s": "NOTA_CADASTRADA",
+          "l": "Nota cadastrada",
+          "d": "2026-09-04T11:00:00",
+          "loc": ""
+        },
+        {
+          "s": "COLETADO",
+          "l": "Mercadoria coletada",
+          "d": "2026-09-04T18:30:00",
+          "loc": "São Paulo/SP"
+        },
+        {
+          "s": "EM_TRANSITO",
+          "l": "Em transferência",
+          "d": "2026-09-05T02:15:00",
+          "loc": "São Paulo/SP"
+        },
+        {
+          "s": "UNIDADE_DESTINO",
+          "l": "Filial Belo Horizonte",
+          "d": "2026-09-06T16:40:00",
+          "loc": "Belo Horizonte/MG"
+        },
+        {
+          "s": "SAIU_PARA_ENTREGA",
+          "l": "Saiu para entrega",
+          "d": "2026-09-07T08:10:00",
+          "loc": "Belo Horizonte/MG"
+        },
+        {
+          "s": "ENTREGUE",
+          "l": "Entregue ao destinatário",
+          "d": "2026-09-07T14:20:00",
+          "loc": "Belo Horizonte/MG"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "nf": "104890",
+      "series": "1",
+      "order": "PED-8920",
+      "issued": "2026-09-09",
+      "issuer": "Têxtil Nordeste",
+      "recipient": "Loja do Pedro",
+      "recipientDoc": "78.901.234/0001-66",
+      "city": "Recife",
+      "state": "PE",
+      "value": 1560,
+      "carrierId": 1,
+      "status": "AGUARDANDO_COLETA",
+      "tracking": "",
+      "eta": "",
+      "lastCheck": "2026-09-09T17:00:00",
+      "by": "Gabriel",
+      "events": [
+        {
+          "s": "NOTA_CADASTRADA",
+          "l": "Nota cadastrada",
+          "d": "2026-09-09T17:00:00",
+          "loc": ""
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "nf": "103921",
+      "series": "1",
+      "order": "PED-8650",
+      "issued": "2026-09-02",
+      "issuer": "Papéis do Brasil",
+      "recipient": "Papelaria Central",
+      "recipientDoc": "23.456.789/0001-11",
+      "city": "Campinas",
+      "state": "SP",
+      "value": 3200,
+      "carrierId": 2,
+      "status": "ENTREGUE",
+      "tracking": "BRP3847291",
+      "eta": "2026-09-05",
+      "lastCheck": "2026-09-05T11:35:00",
+      "by": "Ana",
+      "events": [
+        {
+          "s": "NOTA_CADASTRADA",
+          "l": "Nota cadastrada",
+          "d": "2026-09-02T09:00:00",
+          "loc": ""
+        },
+        {
+          "s": "COLETADO",
+          "l": "Mercadoria coletada",
+          "d": "2026-09-02T15:20:00",
+          "loc": "São Paulo/SP"
+        },
+        {
+          "s": "EM_TRANSITO",
+          "l": "Em transferência",
+          "d": "2026-09-03T01:45:00",
+          "loc": "São Paulo/SP"
+        },
+        {
+          "s": "ENTREGUE",
+          "l": "Entregue",
+          "d": "2026-09-05T11:35:00",
+          "loc": "Campinas/SP"
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "nf": "105100",
+      "series": "1",
+      "order": "PED-9050",
+      "issued": "2026-09-09",
+      "issuer": "Alimentos do Sul",
+      "recipient": "Supermercado Bom Preço",
+      "recipientDoc": "45.678.901/0001-44",
+      "city": "Porto Alegre",
+      "state": "RS",
+      "value": 5890,
+      "carrierId": 1,
+      "status": "EM_TRANSITO",
+      "tracking": "JMF1029384",
+      "eta": "2026-09-12",
+      "lastCheck": "2026-09-10T04:10:00",
+      "by": "Gabriel",
+      "events": [
+        {
+          "s": "NOTA_CADASTRADA",
+          "l": "Nota cadastrada",
+          "d": "2026-09-09T08:00:00",
+          "loc": ""
+        },
+        {
+          "s": "COLETADO",
+          "l": "Mercadoria coletada",
+          "d": "2026-09-09T14:30:00",
+          "loc": "São Paulo/SP"
+        },
+        {
+          "s": "EM_TRANSITO",
+          "l": "Em trânsito",
+          "d": "2026-09-10T04:10:00",
+          "loc": "Florianópolis/SC"
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "nf": "104600",
+      "series": "3",
+      "order": "PED-8750",
+      "issued": "2026-09-05",
+      "issuer": "Eletrônicos Ltda",
+      "recipient": "Tech Store",
+      "recipientDoc": "67.890.123/0001-77",
+      "city": "Goiânia",
+      "state": "GO",
+      "value": 12400,
+      "carrierId": 3,
+      "status": "OCORRENCIA",
+      "tracking": "RDN5839201",
+      "eta": "2026-09-09",
+      "lastCheck": "2026-09-09T15:30:00",
+      "by": "Ana",
+      "events": [
+        {
+          "s": "NOTA_CADASTRADA",
+          "l": "Nota cadastrada",
+          "d": "2026-09-05T13:40:00",
+          "loc": ""
+        },
+        {
+          "s": "COLETADO",
+          "l": "Mercadoria coletada",
+          "d": "2026-09-05T19:00:00",
+          "loc": "São Paulo/SP"
+        },
+        {
+          "s": "EM_TRANSITO",
+          "l": "Em trânsito",
+          "d": "2026-09-06T03:50:00",
+          "loc": "Ribeirão Preto/SP"
+        },
+        {
+          "s": "UNIDADE_DESTINO",
+          "l": "Filial Goiânia",
+          "d": "2026-09-08T10:20:00",
+          "loc": "Goiânia/GO"
+        },
+        {
+          "s": "SAIU_PARA_ENTREGA",
+          "l": "Saiu para entrega",
+          "d": "2026-09-09T07:00:00",
+          "loc": "Goiânia/GO"
+        },
+        {
+          "s": "OCORRENCIA",
+          "l": "Destinatário ausente",
+          "d": "2026-09-09T15:30:00",
+          "loc": "Goiânia/GO"
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "nf": "105050",
+      "series": "1",
+      "order": "PED-9010",
+      "issued": "2026-09-09",
+      "issuer": "Cosméticos Bahia",
+      "recipient": "Drogaria Express",
+      "recipientDoc": "89.012.345/0001-22",
+      "city": "Salvador",
+      "state": "BA",
+      "value": 980,
+      "carrierId": 4,
+      "status": "COLETADO",
+      "tracking": "SS123456789BR",
+      "eta": "2026-09-14",
+      "lastCheck": "2026-09-10T09:00:00",
+      "by": "Gabriel",
+      "events": [
+        {
+          "s": "NOTA_CADASTRADA",
+          "l": "Nota cadastrada",
+          "d": "2026-09-09T11:20:00",
+          "loc": ""
+        },
+        {
+          "s": "COLETADO",
+          "l": "Objeto postado",
+          "d": "2026-09-10T09:00:00",
+          "loc": "São Paulo/SP"
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "nf": "104200",
+      "series": "1",
+      "order": "PED-8700",
+      "issued": "2026-09-06",
+      "issuer": "Peças Automotivas",
+      "recipient": "Auto Center Fortaleza",
+      "recipientDoc": "01.234.567/0001-99",
+      "city": "Fortaleza",
+      "state": "CE",
+      "value": 6750,
+      "carrierId": 2,
+      "status": "EM_TRANSITO",
+      "tracking": "BRP6748392",
+      "eta": "2026-09-11",
+      "lastCheck": "2026-09-10T07:43:00",
+      "by": "Ana",
+      "events": [
+        {
+          "s": "NOTA_CADASTRADA",
+          "l": "Nota cadastrada",
+          "d": "2026-09-06T16:30:00",
+          "loc": ""
+        },
+        {
+          "s": "COLETADO",
+          "l": "Mercadoria coletada",
+          "d": "2026-09-07T09:15:00",
+          "loc": "São Paulo/SP"
+        },
+        {
+          "s": "EM_TRANSITO",
+          "l": "Em transferência",
+          "d": "2026-09-08T01:40:00",
+          "loc": "Teresina/PI"
+        }
+      ]
+    },
+    {
+      "id": 11,
+      "nf": "103750",
+      "series": "1",
+      "order": "PED-8580",
+      "issued": "2026-09-01",
+      "issuer": "Bebidas Rio",
+      "recipient": "Restaurante Sabor",
+      "recipientDoc": "34.567.890/0002-99",
+      "city": "Niterói",
+      "state": "RJ",
+      "value": 2340,
+      "carrierId": 1,
+      "status": "ENTREGUE",
+      "tracking": "JMF8374625",
+      "eta": "2026-09-04",
+      "lastCheck": "2026-09-04T16:50:00",
+      "by": "Ana",
+      "events": [
+        {
+          "s": "NOTA_CADASTRADA",
+          "l": "Nota cadastrada",
+          "d": "2026-09-01T10:00:00",
+          "loc": ""
+        },
+        {
+          "s": "COLETADO",
+          "l": "Mercadoria coletada",
+          "d": "2026-09-01T17:30:00",
+          "loc": "São Paulo/SP"
+        },
+        {
+          "s": "EM_TRANSITO",
+          "l": "Em trânsito",
+          "d": "2026-09-02T05:20:00",
+          "loc": "Volta Redonda/RJ"
+        },
+        {
+          "s": "ENTREGUE",
+          "l": "Entregue",
+          "d": "2026-09-04T16:50:00",
+          "loc": "Niterói/RJ"
+        }
+      ]
+    },
+    {
+      "id": 12,
+      "nf": "105150",
+      "series": "1",
+      "order": "PED-9080",
+      "issued": "2026-09-10",
+      "issuer": "Materiais Elétricos",
+      "recipient": "Constrular Materiais",
+      "recipientDoc": "56.789.012/0002-44",
+      "city": "Manaus",
+      "state": "AM",
+      "value": 8900,
+      "carrierId": 2,
+      "status": "EM_TRANSITO",
+      "tracking": "BRP9182734",
+      "eta": "2026-09-15",
+      "lastCheck": "2026-09-10T10:20:00",
+      "by": "Gabriel",
+      "events": [
+        {
+          "s": "NOTA_CADASTRADA",
+          "l": "Nota cadastrada",
+          "d": "2026-09-10T08:00:00",
+          "loc": ""
+        },
+        {
+          "s": "COLETADO",
+          "l": "Mercadoria coletada",
+          "d": "2026-09-10T10:20:00",
+          "loc": "São Paulo/SP"
+        }
+      ]
+    },
+    {
+      "id": 13,
+      "nf": "104350",
+      "series": "2",
+      "order": "PED-8720",
+      "issued": "2026-09-05",
+      "issuer": "Ferramentas PRO",
+      "recipient": "Oficina Mecânica Central",
+      "recipientDoc": "78.901.234/0002-11",
+      "city": "Brasília",
+      "state": "DF",
+      "value": 3450,
+      "carrierId": 1,
+      "status": "ATRASADO",
+      "tracking": "JMF2938475",
+      "eta": "2026-09-09",
+      "lastCheck": "2026-09-09T12:15:00",
+      "by": "Ana",
+      "events": [
+        {
+          "s": "NOTA_CADASTRADA",
+          "l": "Nota cadastrada",
+          "d": "2026-09-05T14:00:00",
+          "loc": ""
+        },
+        {
+          "s": "COLETADO",
+          "l": "Mercadoria coletada",
+          "d": "2026-09-06T08:30:00",
+          "loc": "São Paulo/SP"
+        },
+        {
+          "s": "EM_TRANSITO",
+          "l": "Em trânsito",
+          "d": "2026-09-07T02:10:00",
+          "loc": "Uberlândia/MG"
+        }
+      ]
+    },
+    {
+      "id": 14,
+      "nf": "103600",
+      "series": "1",
+      "order": "PED-8500",
+      "issued": "2026-08-30",
+      "issuer": "Móveis Design",
+      "recipient": "Escritório Moderno",
+      "recipientDoc": "90.123.456/0001-55",
+      "city": "Florianópolis",
+      "state": "SC",
+      "value": 15600,
+      "carrierId": 2,
+      "status": "ENTREGUE",
+      "tracking": "BRP1827364",
+      "eta": "2026-09-03",
+      "lastCheck": "2026-09-03T10:40:00",
+      "by": "Gabriel",
+      "events": [
+        {
+          "s": "NOTA_CADASTRADA",
+          "l": "Nota cadastrada",
+          "d": "2026-08-30T09:30:00",
+          "loc": ""
+        },
+        {
+          "s": "COLETADO",
+          "l": "Mercadoria coletada",
+          "d": "2026-08-30T16:00:00",
+          "loc": "São Paulo/SP"
+        },
+        {
+          "s": "EM_TRANSITO",
+          "l": "Em transferência",
+          "d": "2026-08-31T03:20:00",
+          "loc": "Curitiba/PR"
+        },
+        {
+          "s": "ENTREGUE",
+          "l": "Entregue",
+          "d": "2026-09-03T10:40:00",
+          "loc": "Florianópolis/SC"
+        }
+      ]
+    },
+    {
+      "id": 15,
+      "nf": "105080",
+      "series": "1",
+      "order": "PED-9030",
+      "issued": "2026-09-09",
+      "issuer": "Gráfica Express",
+      "recipient": "Editora Conhecimento",
+      "recipientDoc": "12.345.678/0002-77",
+      "city": "Curitiba",
+      "state": "PR",
+      "value": 1200,
+      "carrierId": 4,
+      "status": "EM_TRANSITO",
+      "tracking": "SS456789012BR",
+      "eta": "2026-09-13",
+      "lastCheck": "2026-09-10T05:00:00",
+      "by": "Ana",
+      "events": [
+        {
+          "s": "NOTA_CADASTRADA",
+          "l": "Nota cadastrada",
+          "d": "2026-09-09T15:30:00",
+          "loc": ""
+        },
+        {
+          "s": "COLETADO",
+          "l": "Objeto postado",
+          "d": "2026-09-09T18:00:00",
+          "loc": "São Paulo/SP"
+        },
+        {
+          "s": "EM_TRANSITO",
+          "l": "Em trânsito",
+          "d": "2026-09-10T05:00:00",
+          "loc": "Registro/SP"
+        }
+      ]
+    }
+  ]
+}

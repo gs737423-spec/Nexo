@@ -1,0 +1,21 @@
+{
+  "name": "nexo-delivery-tracking",
+  "version": "0.1.0",
+  "private": true,
+  "description": "MVP local para gestão e rastreio de entregas por nota fiscal.",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node --test",
+    "provision-admin": "node scripts/provision-admin.js",
+    "migrate:neon": "node scripts/migrate-to-neon.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@neondatabase/serverless": "^1.1.0",
+    "@vercel/blob": "^2.8.0",
+    "dotenv": "^17.4.2",
+    "pdf-parse": "^1.1.1"
+  }
+}
