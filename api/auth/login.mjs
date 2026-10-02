@@ -9,6 +9,15 @@ const json = (body, status = 200) => new Response(JSON.stringify(body), {
   headers: { "Content-Type": "application/json; charset=utf-8", "Cache-Control": "no-store" },
 });
 
+async function provisionInitialAdmin(auth) {
+  if (await auth.hasUsers()) return;
+  const email = String(process.env.NEXO_INITIAL_ADMIN_EMAIL || "").trim().toLowerCase();
+  const password = String(process.env.NEXO_INITIAL_ADMIN_PASSWORD || "");
+  const name = String(process.env.NEXO_INITIAL_ADMIN_NAME || "Gabriel").trim() || "Gabriel";
+  if (!email || !password) return;
+  await auth.provisionAdmin({ name, email, password });
+}
+
 export async function POST(request) {
   try {
     if (!(process.env.DATABASE_URL || process.env.NEON_DATABASE_URL || process.env.POSTGRES_URL)) return json({ error: "Banco de dados não configurado." }, 503);
@@ -20,6 +29,7 @@ export async function POST(request) {
     const database = createDatabase();
     await database.initialize();
     const auth = createDatabaseAuthService({ database });
+    await provisionInitialAdmin(auth);
     const result = await auth.login({ email, password });
     return result ? json(result) : json({ error: "E-mail ou senha inválidos." }, 401);
   } catch (error) {
