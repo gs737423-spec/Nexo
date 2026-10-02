@@ -181,6 +181,15 @@ test("permite que a equipe atualize manualmente a etapa da entrega", async () =>
   assert.equal(updated.body.status, "EM_TRANSITO");
   assert.equal(updated.body.events.at(-1).l, "Conferido no portal da transportadora");
   assert.equal(updated.body.events.at(-1).loc, "Atualização manual");
+
+  const eventCount = updated.body.events.length;
+  const repeated = await request(`/api/invoices/${created.body.id}/status`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ status: "EM_TRANSITO" }),
+  });
+  assert.equal(repeated.response.status, 200);
+  assert.equal(repeated.body.events.length, eventCount);
 });
 
 test("registra report com captura e múltiplas áreas selecionadas", async () => {

@@ -459,11 +459,17 @@ function createNexoServer(options = {}) {
           if (!MANUAL_STATUSES.has(status)) throw new ApiError(422, "Etapa de entrega inválida.");
           const note = optionalText(body.note, 300);
           const now = new Date().toISOString();
+          const previousStatus = invoice.status;
           invoice.status = status;
           invoice.lastCheck = now;
           invoice.by = user.name;
           invoice.events = invoice.events || [];
-          invoice.events.push({ s: status, l: note || MANUAL_STATUSES.get(status), d: now, loc: "Atualização manual" });
+          if (previousStatus === status) {
+            const currentEvent = [...invoice.events].reverse().find((event) => event.s === status);
+            if (currentEvent && note) currentEvent.l = note;
+          } else {
+            invoice.events.push({ s: status, l: note || MANUAL_STATUSES.get(status), d: now, loc: "Atualização manual" });
+          }
           await saveStore(store);
           await auth.audit({ userId: user.id, action: "INVOICE_STATUS_UPDATED", resource: `invoice:${invoice.id}` });
           sendJson(response, 200, invoice);

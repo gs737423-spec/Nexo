@@ -53,11 +53,17 @@ export async function POST(request, context) {
     if (!invoice) return json({ error: "Nota fiscal não encontrada." }, 404);
 
     const now = new Date().toISOString();
+    const previousStatus = invoice.status;
     invoice.status = status;
     invoice.lastCheck = now;
     invoice.by = user.name;
     invoice.events = invoice.events || [];
-    invoice.events.push({ s: status, l: note || STATUSES.get(status), d: now, loc: "Atualização manual" });
+    if (previousStatus === status) {
+      const currentEvent = [...invoice.events].reverse().find((event) => event.s === status);
+      if (currentEvent && note) currentEvent.l = note;
+    } else {
+      invoice.events.push({ s: status, l: note || STATUSES.get(status), d: now, loc: "Atualização manual" });
+    }
     await database.write("store", store);
     await auth.audit({ userId: user.id, action: "INVOICE_STATUS_UPDATED", resource: `invoice:${invoice.id}` });
     return json(invoice);

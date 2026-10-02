@@ -658,15 +658,17 @@ function renderDetail(){
 
   var steps=['NOTA_CADASTRADA','COLETADO','EM_TRANSITO','UNIDADE_DESTINO','SAIU_PARA_ENTREGA','ENTREGUE'];
   var evts=inv.events||[];
-  var lastIdx = evts.reduce(function(highest,event){ return Math.max(highest, steps.indexOf(event.s)); }, -1);
+  var lastIdx = steps.indexOf(inv.status);
+  if(lastIdx<0) lastIdx=evts.reduce(function(highest,event){ return Math.max(highest, steps.indexOf(event.s)); }, -1);
+  var latestByStep={};
+  evts.forEach(function(event){ if(steps.indexOf(event.s)>=0) latestByStep[event.s]=event; });
   var timelineHtml='';
-  evts.forEach(function(e,idx){
-    var completed = idx<evts.length-1, current = idx===evts.length-1;
-    timelineHtml+=timelineItem(e.l, fmtDateTime(e.d), e.loc, completed?'#16A34A':'#2563EB', 'none', '#111827', current?'600':'400', true);
-  });
-  var pending=steps.filter(function(st,idx){ return idx>lastIdx && !evts.some(function(e){return e.s===steps[idx];}); });
-  pending.forEach(function(step,idx){
-    timelineHtml+=timelineItem((SC[step]||{}).label||step, '', '', 'transparent', '2px solid #D1D5DB', '#9CA3AF', '400', idx<pending.length-1);
+  steps.forEach(function(step,idx){
+    var event=latestByStep[step], completed=idx<lastIdx, current=idx===lastIdx;
+    var label=event && event.l ? event.l : ((SC[step]||{}).label||step);
+    var date=event ? fmtDateTime(event.d) : '';
+    var location=event ? event.loc : '';
+    timelineHtml+=timelineItem(label,date,location,completed?'#16A34A':current?'#2563EB':'transparent',completed||current?'none':'2px solid #D1D5DB',completed?'#111827':current?'#111827':'#9CA3AF',current?'600':completed?'400':'400',idx<steps.length-1);
   });
 
   var selectedManualStatus=state.manualStatus||inv.status;
