@@ -210,7 +210,9 @@
   @media (max-width:560px) {
     nav { height:58px !important; } nav > div:first-child > div:first-child { font-size:18px !important; } nav span:not(:first-child) { display:none; }
     .kpi-grid { grid-template-columns:1fr; }
-    .filters-row > div:nth-child(2) { width:100%; overflow-x:auto; }
+    .filters-row > div:nth-child(2) { width:100%; overflow:visible; }
+    .filter-tabs.filter-expanded { width:100% !important; flex-wrap:wrap; gap:4px !important; }
+    .filter-tabs.filter-expanded .filter-tab { display:block !important; flex:1 0 calc(33.333% - 4px); min-width:0; padding:9px 6px !important; font-size:11px !important; }
   }
   /* Pierry-inspired dark product language: quiet surfaces, deliberate color. */
   html[data-theme="dark"] body { background:#090909; color:#F6F3F7; }
