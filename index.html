@@ -341,7 +341,14 @@ async function api(path, options){
   var headers=options.headers||{};
   if(state.session&&state.session.token) headers.Authorization='Bearer '+state.session.token;
   var response = await fetch('/api'+path,{method:options.method,headers:headers,body:options.body});
-  var payload = await response.json();
+  var payload;
+  if(typeof response.text === 'function'){
+    var raw = await response.text();
+    try { payload = raw ? JSON.parse(raw) : {}; }
+    catch(ignore) { throw new Error('A API retornou uma resposta inválida. Tente novamente em instantes.'); }
+  } else {
+    payload = await response.json();
+  }
   if(response.status===401 && state.loggedIn){ state.loggedIn=false; state.session=null; state.apiError='Sua sessão expirou. Entre novamente.'; render(); }
   if(!response.ok) throw new Error(payload.error || 'Não foi possível concluir a solicitação.');
   return payload;
