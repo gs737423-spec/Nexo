@@ -782,7 +782,7 @@ window.goToReports=async function(fromPop){
 window.goToDetail=function(id,fromPop){ state.screen='detail'; state.selectedId=id; state.editingDetail=false; state.manualStatus=null; if(!fromPop) pushAppHistory('detail',{id:id}); render(); };
 window.goToClient=function(key,fromPop){ state.clientKey=key; state.screen='client'; if(!fromPop) pushAppHistory('client',{key:key}); render(); };
 window.goToVendor=function(key,fromPop){ state.vendorKey=key; state.screen='vendor'; if(!fromPop) pushAppHistory('vendor',{key:key}); render(); };
-window.addEventListener('popstate',function(event){ var s=event.state||{}; if(!state.loggedIn) return; if(s.screen==='detail') window.goToDetail(s.extra&&s.extra.id,true); else if(s.screen==='client') window.goToClient(s.extra&&s.extra.key,true); else if(s.screen==='vendor') window.goToVendor(s.extra&&s.extra.key,true); else if(s.screen==='upload') window.goToUpload(true); else if(s.screen==='reports') window.goToReports(true); else window.goToDashboard(true); });
+if (window.addEventListener) window.addEventListener('popstate',function(event){ var s=event.state||{}; if(!state.loggedIn) return; if(s.screen==='detail') window.goToDetail(s.extra&&s.extra.id,true); else if(s.screen==='client') window.goToClient(s.extra&&s.extra.key,true); else if(s.screen==='vendor') window.goToVendor(s.extra&&s.extra.key,true); else if(s.screen==='upload') window.goToUpload(true); else if(s.screen==='reports') window.goToReports(true); else window.goToDashboard(true); });
 window.toggleDetailEdit=function(){ state.editingDetail=!state.editingDetail; state.apiError=''; render(); };
 window.selectManualStatus=function(status){ state.manualStatus=status; state.apiError=''; render(); };
 window.saveDetailEdit=async function(){

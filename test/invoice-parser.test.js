@@ -148,6 +148,16 @@ test("extrai valor e item de um trecho de DANFE Protheus", () => {
   assert.deepEqual(draft.financialCheck, { checkedItems: 1, inconsistentItems: 0, productsTotal: 1051.57, invoiceTotal: 998.99, totalDifference: -52.58 });
 });
 
+test("extrai item quando o código do produto é alfanumérico no DANFE Protheus", () => {
+  const draft = parseNFeText(`
+    DANFE N. 000022351
+    DADOS DO PRODUTO / SERVIÇO
+    PAC-43814FREEZ H 99L 2 EM 1 PFH105B PHILCO B84183000 200 6108 UN 1,00001.051,5700 1.051,57
+  `);
+
+  assert.deepEqual(draft.items, [{ code: "PAC-43814", description: "FREEZ H 99L 2 EM 1 PFH105B PHILCO B", unit: "UN", quantity: 1, unitValue: 1051.57, total: 1051.57 }]);
+});
+
 test("sinaliza item extraído cuja conta não fecha, sem inventar uma correção", () => {
   const draft = parseNFeXml(`<NFe><infNFe><ide><nNF>100</nNF></ide><det nItem="1"><prod><cProd>1</cProd><xProd>Produto</xProd><uCom>UN</uCom><qCom>2.0000</qCom><vUnCom>10.0000</vUnCom><vProd>25.00</vProd></prod></det></infNFe></NFe>`);
   assert.equal(draft.items[0].total, 25);

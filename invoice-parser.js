@@ -155,13 +155,19 @@ function parseNFeXml(source) {
 
 function parsePdfItems(source) {
   const items = [];
-  const pattern = /(?:^|\n)\s*(\d{3,20})(.+?)(\d{8})(\d{3})(\d{4})([A-Z]{1,5})(\d[\d.]*,\d{4})([\d.]+,\d{4})([\d.]+,\d{2})/gmi;
-  for (const match of source.matchAll(pattern)) {
-    const item = itemFromProduct({
-      code: match[1], description: text(match[2]),
-      unit: match[6], quantity: match[7], unitValue: match[8], total: match[9],
-    });
-    if (item) items.push(item);
+  // The first column is usually numeric, but Protheus can emit a prefixed
+  // alphanumeric code such as `PAC-43814`. Keep both strict formats and
+  // require the fixed NCM/CST/CFOP/value columns before accepting a row.
+  const codePatterns = ["\\d{3,20}", "[A-Z]{1,6}[-/]\\d{2,20}"];
+  for (const codePattern of codePatterns) {
+    const pattern = new RegExp(`(?:^|\\n)\\s*(${codePattern})(.+?)\\s*(\\d{8})\\s*(\\d{3})\\s*(\\d{4})\\s*([A-Z]{1,5})\\s*([\\d.]+,\\d{4})\\s*([\\d.]+,\\d{4})\\s*([\\d.]+,\\d{2})`, "gmi");
+    for (const match of source.matchAll(pattern)) {
+      const item = itemFromProduct({
+        code: match[1], description: text(match[2]),
+        unit: match[6], quantity: match[7], unitValue: match[8], total: match[9],
+      });
+      if (item) items.push(item);
+    }
   }
   return items;
 }
@@ -169,7 +175,7 @@ function parsePdfItems(source) {
 function parseNFeText(source) {
   const documentText = text(source).replace(/\n ?/g, "\n");
   const destination = section(documentText, /DESTINAT[^\n]*\n?REMETENTE/i);
-  const transport = section(documentText, /(?:TRANSPORT(?:ADOR|ADORA|E)|RAZ[ÃA]O\s+SOCIAL)\s*\/?\s*(?:VOLUMES?\s+TRANSPORTADOS?)?/i, 1100);
+  const transport = section(documentText, /TRANSPORT(?:ADOR|ADORA|E)\s*\/?\s*(?:VOLUMES?\s+TRANSPORTADOS?)?/i, 1100);
   const draft = baseDraft();
 
   draft.nf = formatNf(firstMatch(documentText, [
@@ -178,7 +184,7 @@ function parseNFeText(source) {
   ]));
   draft.recipient = firstMatch(destination, [
     /NOME\/?RAZ[^\n]*\n\s*([^\n]+)/i,
-  ]);
+  ]).replace(/\s+(?:CNPJ|CPF)\b.*$/i, "");
   draft.doc = firstMatch(destination, [
     /(?:CNPJ|CPF)\s*[:.-]?\s*\n?\s*(\d{2}\.?\d{3}\.?\d{3}\/?\d{0,4}-?\d{0,2}|\d{3}\.?\d{3}\.?\d{3}-?\d{2})\b/i,
   ]);
@@ -190,6 +196,7 @@ function parseNFeText(source) {
   ]));
   draft.carrier = carrierFromTransportSection(transport);
   draft.city = firstMatch(destination, [
+    /MUNIC[ÍI]PIO\s*[:.-]?\s*([^\n]+?)(?=\s+(?:FONE\/?FAX|UF|CEP|BAIRRO)\b)/i,
     /MUNIC[^\n]*\n\s*([^\n]+)/i,
   ]);
   draft.state = firstMatch(destination, [
