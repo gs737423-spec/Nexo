@@ -47,11 +47,21 @@ function sendError(response, error) {
 }
 
 function bearerToken(request) {
-  const match = /^Bearer\s+(.+)$/i.exec(request.headers.authorization || "");
+  const authorization = typeof request.headers?.get === "function"
+    ? request.headers.get("authorization")
+    : request.headers?.authorization;
+  const match = /^Bearer\s+(.+)$/i.exec(authorization || "");
   return match ? match[1] : "";
 }
 
 function readJsonBody(request) {
+  // Vercel Functions hand us a Web Request, whereas local Node uses an
+  // IncomingMessage stream. Supporting both preserves the same API contract.
+  if (typeof request.json === "function" && typeof request.on !== "function") {
+    return request.json().catch(() => {
+      throw new ApiError(400, "JSON inválido.");
+    });
+  }
   return new Promise((resolve, reject) => {
     let received = 0;
     const chunks = [];
@@ -300,7 +310,7 @@ function createNexoServer(options = {}) {
       if (request.method === "POST" && pathname === "/api/auth/login") {
         const body = await readJsonBody(request);
         const email = requiredText(body.email, "E-mail", 160);
-        const result = await auth.login({ email, password: body.password, ip: request.socket.remoteAddress || "unknown" });
+        const result = await auth.login({ email, password: body.password, ip: request.socket?.remoteAddress || "unknown" });
         if (!result) throw new ApiError(401, "E-mail ou senha inválidos.");
         sendJson(response, 200, result);
         return;
