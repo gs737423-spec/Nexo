@@ -115,13 +115,12 @@
   @keyframes ambientPulse { 0%,100% { transform:scale(.96); opacity:.48; } 50% { transform:scale(1.04); opacity:.8; } }
   @keyframes ambientBeam { from { transform:translate3d(-8vw,-3vh,0) rotate(-12deg); opacity:.45; } to { transform:translate3d(9vw,4vh,0) rotate(-12deg); opacity:.9; } }
   .page-enter { animation:pageEnter .22s ease-out both; }
-  .login-shell { min-height:100vh; display:flex; align-items:center; justify-content:center; padding:28px 20px; overflow:hidden; isolation:isolate; background:#09090B; }
-  .login-shell::before { content:""; position:absolute; z-index:-2; inset:0; background:radial-gradient(540px 400px at 12% 16%,rgba(130,0,235,.20),transparent 68%),radial-gradient(520px 380px at 88% 82%,rgba(20,219,141,.11),transparent 66%),linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px); background-size:auto,auto,44px 44px,44px 44px; opacity:.88; }
-  .login-shell::after { content:""; position:absolute; z-index:-1; width:min(760px,82vw); height:230px; top:10%; border-radius:50%; background:linear-gradient(90deg,transparent,rgba(151,23,255,.17),rgba(28,215,141,.07),transparent); filter:blur(26px); transform:rotate(-12deg); }
+  .login-shell { min-height:100vh; display:flex; align-items:center; justify-content:center; padding:28px 20px; overflow:hidden; isolation:isolate; background:#100E13; }
+  .login-shell::before { content:""; position:absolute; z-index:-2; inset:0; background:radial-gradient(620px 430px at 12% 12%,rgba(116,14,170,.24),transparent 68%),radial-gradient(560px 400px at 90% 84%,rgba(23,90,67,.16),transparent 70%); }
+  .login-shell::after { content:""; position:absolute; z-index:-1; width:min(760px,82vw); height:230px; top:10%; border-radius:50%; background:rgba(154,25,229,.13); filter:blur(60px); transform:rotate(-12deg); }
   .login-card { width:min(100%,420px); padding:34px; border:1px solid rgba(255,255,255,.13); border-radius:28px; background:linear-gradient(140deg,rgba(29,25,33,.87),rgba(14,14,17,.78)); box-shadow:0 28px 80px rgba(0,0,0,.46),inset 0 1px 0 rgba(255,255,255,.06); backdrop-filter:blur(18px); animation:glowIn .38s ease-out both; }
   .login-brand { margin-bottom:27px; }
-  .login-brand-mark { display:inline-flex; align-items:center; justify-content:center; width:42px; height:42px; border-radius:15px; background:linear-gradient(145deg,#B326FF,#6B0AAB); color:#fff; font-size:15px; font-weight:800; letter-spacing:-.08em; box-shadow:0 10px 26px rgba(149,18,236,.30),inset 0 1px 0 rgba(255,255,255,.3); }
-  .login-brand-title { font-size:30px; line-height:1.04; font-weight:760; letter-spacing:-.065em; color:#FBF8FD; }
+  .login-brand-title { font-size:27px; line-height:1.1; font-weight:760; letter-spacing:-.065em; color:#FBF8FD; white-space:nowrap; }
   .login-brand-subtitle { max-width:250px; margin-top:9px; color:#AFA6B6; font-size:12px; font-weight:500; line-height:1.55; }
   .login-field { margin-bottom:17px; }
   .login-field label { display:block; margin:0 0 8px 2px; color:#D1C8D7; font-size:11px; font-weight:680; letter-spacing:-.01em; }
@@ -136,7 +135,7 @@
   .login-submit:hover { background:linear-gradient(105deg,#B91DFF,#8111C3); box-shadow:0 15px 30px rgba(138,0,224,.32); transform:translateY(-1px); }
   .login-submit:disabled { cursor:wait; opacity:.72; box-shadow:none; }
   .login-error { margin-bottom:18px; padding:11px 13px; border:1px solid rgba(255,108,126,.31); border-radius:14px; background:rgba(91,25,35,.31); color:#FFB2BA; font-size:11px; font-weight:560; line-height:1.4; }
-  @media (max-width:480px) { .login-shell { padding:18px; align-items:center; } .login-card { padding:27px 22px 24px; border-radius:24px; } .login-brand { margin-bottom:24px; } .login-brand-title { font-size:27px; } }
+  @media (max-width:480px) { .login-shell { padding:18px; align-items:center; } .login-card { padding:27px 22px 24px; border-radius:24px; } .login-brand { margin-bottom:24px; } .login-brand-title { font-size:23px; } }
   .kpi-grid > button { animation:glowIn .32s ease-out both; } .kpi-grid > button:nth-child(2){animation-delay:.04s}.kpi-grid > button:nth-child(3){animation-delay:.08s}.kpi-grid > button:nth-child(4){animation-delay:.12s}
   html[data-theme="dark"] body { background:#0B0B0D; color:#F7F4FA; }
   html[data-theme="dark"] body::before { opacity:.82; background:radial-gradient(760px 500px at 12% 0%,rgba(37,99,235,.34),transparent 68%),radial-gradient(680px 460px at 90% 76%,rgba(13,148,136,.22),transparent 68%),linear-gradient(118deg,transparent 0%,rgba(37,99,235,.08) 39%,rgba(13,148,136,.10) 50%,transparent 66%),linear-gradient(rgba(116,146,184,.10) 1px,transparent 1px),linear-gradient(90deg,rgba(116,146,184,.10) 1px,transparent 1px); background-size:auto,auto,180% 180%,42px 42px,42px 42px; }
@@ -252,8 +251,8 @@
   html[data-theme="dark"] .kpi-card [style*="font-weight:800"] { font-weight:800 !important; letter-spacing:-.035em !important; }
   html[data-theme="dark"] .secondary-action:hover { background:#211426 !important; border-color:#8114C2 !important; }
   /* Single dark theme with a restrained frosted-glass system. */
-  html[data-theme="dark"] body { background:#09090B; font-size:14px; }
-  html[data-theme="dark"] body::before { background:radial-gradient(580px 340px at 10% -10%,rgba(157,15,232,.18),transparent 70%),radial-gradient(460px 300px at 92% 64%,rgba(29,200,128,.075),transparent 72%),#09090B; }
+  html[data-theme="dark"] body { background:#100E13; font-size:14px; }
+  html[data-theme="dark"] body::before { background:radial-gradient(680px 440px at 8% -10%,rgba(122,18,178,.20),transparent 70%),radial-gradient(560px 400px at 96% 70%,rgba(24,91,68,.13),transparent 72%),#100E13; }
   html[data-theme="dark"] nav { background:rgba(13,13,15,.78) !important; backdrop-filter:blur(20px) saturate(135%); -webkit-backdrop-filter:blur(20px) saturate(135%); }
   html[data-theme="dark"] .kpi-card,
   html[data-theme="dark"] .data-table,
@@ -459,8 +458,7 @@ function renderLogin(){
   return '<div class="login-shell">'+
     '<div class="login-card">'+
       '<div class="login-brand">'+
-        '<div class="login-brand-mark">NX</div>'+
-        '<div class="login-brand-title">Bem-vindo à<br>NEXO.</div>'+
+        '<div class="login-brand-title">Bem-vindo à NEXO.</div>'+
       '</div>'+
       (state.apiError ? '<div class="login-error">'+esc(state.apiError)+'</div>' : '')+
       '<form onsubmit="window.doLogin(event)">'+
