@@ -243,16 +243,29 @@
   html[data-theme="dark"] .data-table [style*="font-weight:700"],
   html[data-theme="dark"] .kpi-card [style*="font-weight:800"] { font-weight:800 !important; letter-spacing:-.035em !important; }
   html[data-theme="dark"] .secondary-action:hover { background:#211426 !important; border-color:#8114C2 !important; }
-  .dashboard-intro { display:flex; align-items:center; justify-content:space-between; gap:18px; margin:0 0 20px; padding:19px 21px; border:1px solid #2B282E; border-radius:20px; background:radial-gradient(360px 160px at 8% 0%,rgba(154,19,242,.23),transparent 72%),linear-gradient(120deg,#181319,#101012 68%); }
-  .dashboard-eyebrow { display:flex; align-items:center; gap:7px; margin-bottom:5px; color:#C889F4; font-size:10px; font-weight:800; letter-spacing:.075em; text-transform:uppercase; }
-  .dashboard-eyebrow::before { content:""; width:7px; height:7px; border-radius:50%; background:#B215F4; box-shadow:0 0 0 4px rgba(178,21,244,.12); }
-  .dashboard-intro h1 { margin:0; color:#F8F4FA; font-size:24px; font-weight:800; letter-spacing:-.055em; }
-  .dashboard-intro p { margin:5px 0 0; color:#A9A2AF; font-size:12px; font-weight:550; }
-  .dashboard-live { display:flex; align-items:center; gap:7px; padding:8px 11px; border-radius:999px; background:#10281E; color:#72EAAF; font-size:11px; font-weight:750; white-space:nowrap; }
-  .dashboard-live::before { content:""; width:6px; height:6px; border-radius:50%; background:#21D68A; }
-  html[data-theme="dark"] .kpi-card .kpi-label { font-weight:800 !important; }
-  html[data-theme="dark"] .kpi-card .kpi-value { color:#F9F5FA !important; font-weight:800 !important; }
-  @media (max-width:560px) { .dashboard-intro { align-items:flex-start; padding:17px; border-radius:18px; } .dashboard-intro h1 { font-size:21px; } .dashboard-live { padding:7px 9px; font-size:10px; } }
+  /* Single dark theme with a restrained frosted-glass system. */
+  html[data-theme="dark"] body { background:#09090B; font-size:14px; }
+  html[data-theme="dark"] body::before { background:radial-gradient(580px 340px at 10% -10%,rgba(157,15,232,.18),transparent 70%),radial-gradient(460px 300px at 92% 64%,rgba(29,200,128,.075),transparent 72%),#09090B; }
+  html[data-theme="dark"] nav { background:rgba(13,13,15,.78) !important; backdrop-filter:blur(20px) saturate(135%); -webkit-backdrop-filter:blur(20px) saturate(135%); }
+  html[data-theme="dark"] .kpi-card,
+  html[data-theme="dark"] .data-table,
+  html[data-theme="dark"] .filter-tabs,
+  html[data-theme="dark"] .panel,
+  html[data-theme="dark"] .stat-card { backdrop-filter:blur(18px) saturate(125%); -webkit-backdrop-filter:blur(18px) saturate(125%); border-color:rgba(255,255,255,.12) !important; box-shadow:inset 0 1px 0 rgba(255,255,255,.045),0 14px 36px rgba(0,0,0,.18) !important; }
+  html[data-theme="dark"] .data-table { background:rgba(20,19,22,.73) !important; border-radius:18px !important; }
+  html[data-theme="dark"] .filter-tabs { background:rgba(24,22,27,.7) !important; }
+  html[data-theme="dark"] input,
+  html[data-theme="dark"] select,
+  html[data-theme="dark"] #root [style*="background:#fff"],
+  html[data-theme="dark"] #root [style*="background:#FFFFFF"] { background:rgba(22,21,25,.76) !important; backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); border-color:rgba(255,255,255,.13) !important; }
+  html[data-theme="dark"] .table-header { background:rgba(13,13,15,.58) !important; }
+  html[data-theme="dark"] .invoice-row { background:rgba(18,17,20,.32); }
+  html[data-theme="dark"] .invoice-row:hover { background:rgba(66,28,82,.28) !important; }
+  html[data-theme="dark"] .kpi-card .kpi-label { font-size:11px !important; font-weight:800 !important; letter-spacing:.045em !important; }
+  html[data-theme="dark"] .kpi-card .kpi-value { color:#F9F5FA !important; font-size:34px !important; font-weight:800 !important; letter-spacing:-.06em !important; }
+  html[data-theme="dark"] .data-table [style*="font-size:12px"],
+  html[data-theme="dark"] .data-table [style*="font-size:12.5px"] { font-size:12px !important; font-weight:650 !important; }
+  html[data-theme="dark"] nav button { font-size:13px !important; font-weight:750 !important; }
 </style>
 </head>
 <body>
@@ -260,8 +273,7 @@
 <script>
 "use strict";
 
-var savedTheme = typeof localStorage!=='undefined' ? localStorage.getItem('nexo-theme') : '';
-var state = { loggedIn:false, screen:'dashboard', selectedId:null, clientKey:'', vendorKey:'', editingDetail:false, search:'', filter:'all', filterExpanded:false, carrierFilter:'all', deadlineFilter:'all', sortDirection:'asc', uploadStep:'idle', processingStep:0, uploadData:null, dragOver:false, session:null, apiError:'', accountMenu:false, loginLoading:false, showPassword:false, report:null, theme:savedTheme||'dark' };
+var state = { loggedIn:false, screen:'dashboard', selectedId:null, clientKey:'', vendorKey:'', editingDetail:false, search:'', filter:'all', filterExpanded:false, carrierFilter:'all', deadlineFilter:'all', sortDirection:'asc', uploadStep:'idle', processingStep:0, uploadData:null, dragOver:false, session:null, apiError:'', accountMenu:false, loginLoading:false, showPassword:false, report:null, theme:'dark' };
 if(typeof document!=='undefined'&&document.documentElement) document.documentElement.dataset.theme=state.theme;
 
 var carriers = [];
@@ -444,7 +456,7 @@ function renderNav(){
         '<button onclick="window.goToUpload()" style="padding:10px 14px;border-radius:12px;border:none;font-size:13px;font-weight:700;background:'+(upActive?activeBg:'transparent')+';color:'+(upActive?activeText:navText)+'">Nova nota</button>'+
         (user.reportsAccess?'<button onclick="window.goToReports()" style="padding:10px 14px;border-radius:12px;border:none;font-size:13px;font-weight:700;background:'+(state.screen==='reports'?activeBg:'transparent')+';color:'+(state.screen==='reports'?activeText:navText)+'">Reports</button>':'')+
       '</div></div>'+
-    '<div style="display:flex;align-items:center;gap:14px"><button class="secondary-action" onclick="window.toggleTheme()" aria-label="Alternar tema" title="Alternar tema" style="width:34px;height:34px;border:1px solid #DDE5F0;background:#fff;color:#344054;border-radius:10px;font-size:16px">'+(state.theme==='dark'?'☀':'☾')+'</button><button class="secondary-action" onclick="window.startReport()" style="border:1px solid #DDE5F0;background:#fff;color:#344054;border-radius:8px;padding:8px 11px;font-size:12px;font-weight:700">Reportar erro</button><div style="position:relative"><button onclick="window.toggleAccountMenu()" style="display:flex;align-items:center;gap:8px;border:none;background:transparent;color:#344054;font-size:13px;font-weight:600"><span style="width:30px;height:30px;border-radius:50%;background:#EAF2FF;color:#1769E0;display:flex;align-items:center;justify-content:center;font-size:12px">'+esc(initial)+'</span><span>'+esc(user.name||'Conta')+'</span><span style="color:#7B879B">⌄</span></button>'+ 
+    '<div style="display:flex;align-items:center;gap:14px"><button class="secondary-action" onclick="window.startReport()" style="border:1px solid #DDE5F0;background:#fff;color:#344054;border-radius:12px;padding:9px 12px;font-size:12px;font-weight:700">Reportar erro</button><div style="position:relative"><button onclick="window.toggleAccountMenu()" style="display:flex;align-items:center;gap:8px;border:none;background:transparent;color:#344054;font-size:13px;font-weight:700"><span style="width:30px;height:30px;border-radius:50%;background:#EAF2FF;color:#1769E0;display:flex;align-items:center;justify-content:center;font-size:12px">'+esc(initial)+'</span><span>'+esc(user.name||'Conta')+'</span><span style="color:#7B879B">⌄</span></button>'+
     (state.accountMenu?'<div style="position:absolute;right:0;top:40px;width:220px;background:#fff;border:1px solid #E5EAF0;border-radius:10px;padding:8px;box-shadow:0 8px 24px rgba(15,23,42,.10)"><div style="padding:8px 10px;border-bottom:1px solid #EEF1F5"><div style="font-size:13px;font-weight:700">'+esc(user.name||'')+'</div><div style="font-size:11px;color:#7B879B;margin-top:2px">'+esc(user.role||'')+'</div></div><button onclick="window.logout()" style="margin-top:4px;width:100%;text-align:left;padding:8px 10px;background:transparent;border:none;border-radius:6px;color:#B42318;font-size:13px">Sair</button></div>':'')+'</div>'+ 
   '</div></nav>';
 }
@@ -477,11 +489,6 @@ function renderDashboard(){
   var entregues=invoices.filter(function(i){return i.status==='ENTREGUE';}).length;
   var atrasadas=invoices.filter(function(i){return i.status==='ATRASADO';}).length;
   var ocorrencias=invoices.filter(function(i){return i.status==='OCORRENCIA';}).length;
-  var introHtml='<section class="dashboard-intro">'+
-    '<div><div class="dashboard-eyebrow">Nexo em movimento</div><h1>Suas entregas</h1><p>Acompanhe cada nota sem perder o ritmo da operação.</p></div>'+
-    '<div class="dashboard-live">Atualizado agora</div>'+
-  '</section>';
-
   var kpiHtml='<div class="kpi-grid">'+
     kpiCard('Em trânsito', emTransito, dark?'#A100FF':'#2563EB', dark?'#24112D':'#EAF2FF', ICON_TRUCK, 'transito')+
     kpiCard('Entregues', entregues, dark?'#21D68A':'#16A34A', dark?'#10281E':'#E9F8F0', ICON_CIRCLE_CHECK, 'entregues')+
@@ -534,7 +541,7 @@ function renderDashboard(){
 
   var tableHtml='<div class="data-table" style="background:#fff;border:1px solid #E4EAF2;border-radius:14px;overflow:hidden;box-shadow:0 12px 28px rgba(15,23,42,0.055)"><div style="display:flex;align-items:center;justify-content:space-between;padding:12px 20px 0"><div style="font-size:12px;color:#667085;font-weight:600">'+rows.length+' nota'+(rows.length===1?'':'s')+' encontrada'+(rows.length===1?'':'s')+'</div><div style="font-size:11px;color:#98A2B3">Clique em uma linha para abrir</div></div><div class="table-scroll"><div class="table-min-width">'+headerHtml+'<div style="max-height:488px;overflow-y:auto;scrollbar-color:#CBD5E1 transparent;scrollbar-width:thin">'+rowsHtml+'</div></div></div></div>';
 
-  return introHtml+kpiHtml+filtersHtml+tableHtml;
+  return kpiHtml+filtersHtml+tableHtml;
 }
 function kpiCard(label,val,color,soft,icon,filter){
   var bg=state.theme==='dark'?'radial-gradient(155px 110px at 100% 0%,'+soft+' 0%,transparent 72%),#151416':'#fff';
@@ -737,7 +744,6 @@ window.doLogin=async function(e){
 };
 window.togglePassword=function(){ var email=fieldValue('loginEmail',''), password=fieldValue('loginPassword',''); state.showPassword=!state.showPassword; render(); var emailInput=document.getElementById('loginEmail'), passwordInput=document.getElementById('loginPassword'); if(emailInput) emailInput.value=email; if(passwordInput){ passwordInput.value=password; passwordInput.focus(); } };
 window.toggleAccountMenu=function(){ state.accountMenu=!state.accountMenu; render(); };
-window.toggleTheme=function(){ state.theme=state.theme==='dark'?'light':'dark'; if(typeof localStorage!=='undefined') localStorage.setItem('nexo-theme',state.theme); if(document.documentElement) document.documentElement.dataset.theme=state.theme; render(); };
 window.logout=async function(){ try { await api('/auth/logout',jsonOptions({})); } catch(error) {} state.loggedIn=false; state.session=null; state.accountMenu=false; state.apiError=''; render(); };
 function pushAppHistory(screen,extra){ history.pushState({nexo:true,screen:screen,extra:extra||null},'',location.pathname+'#'+screen); }
 window.goToDashboard=function(fromPop){ state.apiError=''; state.screen='dashboard'; state.selectedId=null; if(!fromPop) pushAppHistory('dashboard'); render(); };
