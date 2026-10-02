@@ -295,6 +295,8 @@
   .detail-grid .panel h2::after { width:28px; height:2px; background:#A717F4 !important; opacity:.65; }
   .detail-grid .panel > div[style*="grid-template-columns"] { gap:9px 18px !important; }
   .detail-grid .panel [style*="font-size:14px;font-weight:500"] { font-size:13px !important; }
+  html[data-theme="dark"] .detail-edit-input, html[data-theme="dark"] .detail-edit-input:-webkit-autofill, html[data-theme="dark"] .detail-edit-input:-webkit-autofill:hover, html[data-theme="dark"] .detail-edit-input:-webkit-autofill:focus { background:#17131B !important; background-color:#17131B !important; color:#F7F4FA !important; -webkit-text-fill-color:#F7F4FA !important; border-color:#51465A !important; box-shadow:0 0 0 1000px #17131B inset !important; caret-color:#F7F4FA; }
+  html[data-theme="dark"] .detail-edit-input:focus { border-color:#A717F4 !important; box-shadow:0 0 0 3px rgba(167,23,244,.14) !important; }
   .stage-update { gap:10px; margin-bottom:14px; padding:11px 13px; border-radius:15px; }
   .stage-copy { min-width:112px; }
   .stage-copy strong { font-size:12px !important; }
@@ -732,8 +734,8 @@ function renderDetail(){
     '<div>'+
       section('Nota fiscal','<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">'+
         kv2('Número',inv.nf)+kv2('Série',inv.series)+kv2('Pedido',inv.order||'Não informado')+
-        (state.editingDetail?'<div><div style="font-size:11px;color:#667085">RCA do vendedor</div><input id="editRca" value="'+esc(inv.rca||'')+'" placeholder="Ex.: 105604" style="width:100%;padding:7px 9px;border:1px solid #DDE5F0;border-radius:8px;font-size:13px"></div>':(inv.rca?kvLink('RCA do vendedor',inv.rca,"window.goToVendor('"+esc(inv.rca).replace(/'/g,"\\'")+"')"):kv2('RCA do vendedor','Não informado')))+
-        (state.editingDetail?'<div><div style="font-size:11px;color:#667085">Data prevista</div><input id="editEta" type="date" value="'+esc(inv.eta||'')+'" style="width:100%;padding:7px 9px;border:1px solid #DDE5F0;border-radius:8px;font-size:13px"></div>':kv2('Data prevista',inv.eta?fmtDate(inv.eta):'Não informada'))+
+        (state.editingDetail?'<div><div style="font-size:11px;color:#667085">RCA do vendedor</div><input class="detail-edit-input" id="editRca" value="'+esc(inv.rca||'')+'" placeholder="Ex.: 105604" style="width:100%;padding:7px 9px;border:1px solid #DDE5F0;border-radius:8px;font-size:13px"></div>':(inv.rca?kvLink('RCA do vendedor',inv.rca,"window.goToVendor('"+esc(inv.rca).replace(/'/g,"\\'")+"')"):kv2('RCA do vendedor','Não informado')))+
+        (state.editingDetail?'<div><div style="font-size:11px;color:#667085">Data prevista</div><input class="detail-edit-input" id="editEta" type="date" value="'+esc(inv.eta||'')+'" style="width:100%;padding:7px 9px;border:1px solid #DDE5F0;border-radius:8px;font-size:13px"></div>':kv2('Data prevista',inv.eta?fmtDate(inv.eta):'Não informada'))+
         kv2('Emissão',fmtDate(inv.issued))+kv2('Emissor',inv.issuer||'Não identificado')+kv2('Valor',fmtCurrency(inv.value),true)+kv2('Enviada por',inv.uploadedBy||inv.by||'Não identificado')+kv2('Enviada em',inv.uploadedAt?fmtDateTime(inv.uploadedAt):'Data anterior não registrada')+
         (state.editingDetail?'<div style="grid-column:1/-1"><button onclick="window.saveDetailEdit()" style="padding:8px 12px;border:0;border-radius:8px;background:#1769E0;color:#fff;font-size:12px;font-weight:700">Salvar dados</button></div>':'')+
         '<div style="grid-column:1/-1;margin-top:4px"><a href="/api/invoices/'+inv.id+'/document" onclick="window.openInvoiceDocument('+inv.id+',event)" style="display:inline-flex;align-items:center;gap:7px;padding:9px 12px;border:1px solid #DDE5F0;border-radius:9px;color:#1769E0;font-size:12px;font-weight:700">Abrir PDF/XML original</a></div>'+ 
