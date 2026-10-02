@@ -120,9 +120,7 @@
   .login-shell::after { content:""; position:absolute; z-index:-1; width:min(760px,82vw); height:230px; top:10%; border-radius:50%; background:linear-gradient(90deg,transparent,rgba(151,23,255,.17),rgba(28,215,141,.07),transparent); filter:blur(26px); transform:rotate(-12deg); }
   .login-card { width:min(100%,420px); padding:34px; border:1px solid rgba(255,255,255,.13); border-radius:28px; background:linear-gradient(140deg,rgba(29,25,33,.87),rgba(14,14,17,.78)); box-shadow:0 28px 80px rgba(0,0,0,.46),inset 0 1px 0 rgba(255,255,255,.06); backdrop-filter:blur(18px); animation:glowIn .38s ease-out both; }
   .login-brand { margin-bottom:27px; }
-  .login-brand-top { display:flex; align-items:center; gap:10px; margin-bottom:25px; }
   .login-brand-mark { display:inline-flex; align-items:center; justify-content:center; width:42px; height:42px; border-radius:15px; background:linear-gradient(145deg,#B326FF,#6B0AAB); color:#fff; font-size:15px; font-weight:800; letter-spacing:-.08em; box-shadow:0 10px 26px rgba(149,18,236,.30),inset 0 1px 0 rgba(255,255,255,.3); }
-  .login-product-tag { color:#C7B9D0; font-size:10px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; }
   .login-brand-title { font-size:30px; line-height:1.04; font-weight:760; letter-spacing:-.065em; color:#FBF8FD; }
   .login-brand-subtitle { max-width:250px; margin-top:9px; color:#AFA6B6; font-size:12px; font-weight:500; line-height:1.55; }
   .login-field { margin-bottom:17px; }
@@ -137,10 +135,8 @@
   .login-submit { width:100%; min-height:48px; margin-top:8px; padding:12px; border:1px solid rgba(255,255,255,.14); border-radius:15px; background:linear-gradient(105deg,#A800EF,#7410B3); color:#fff; font-size:13px; font-weight:760; letter-spacing:-.015em; box-shadow:0 12px 25px rgba(138,0,224,.24),inset 0 1px 0 rgba(255,255,255,.22); }
   .login-submit:hover { background:linear-gradient(105deg,#B91DFF,#8111C3); box-shadow:0 15px 30px rgba(138,0,224,.32); transform:translateY(-1px); }
   .login-submit:disabled { cursor:wait; opacity:.72; box-shadow:none; }
-  .login-security-note { display:flex; align-items:center; justify-content:center; gap:7px; margin-top:17px; color:#807689; font-size:10px; font-weight:560; }
-  .login-security-dot { width:6px; height:6px; border-radius:99px; background:#31D787; box-shadow:0 0 12px rgba(49,215,135,.7); }
   .login-error { margin-bottom:18px; padding:11px 13px; border:1px solid rgba(255,108,126,.31); border-radius:14px; background:rgba(91,25,35,.31); color:#FFB2BA; font-size:11px; font-weight:560; line-height:1.4; }
-  @media (max-width:480px) { .login-shell { padding:18px; align-items:center; } .login-card { padding:27px 22px 24px; border-radius:24px; } .login-brand { margin-bottom:24px; } .login-brand-top { margin-bottom:22px; } .login-brand-title { font-size:27px; } }
+  @media (max-width:480px) { .login-shell { padding:18px; align-items:center; } .login-card { padding:27px 22px 24px; border-radius:24px; } .login-brand { margin-bottom:24px; } .login-brand-title { font-size:27px; } }
   .kpi-grid > button { animation:glowIn .32s ease-out both; } .kpi-grid > button:nth-child(2){animation-delay:.04s}.kpi-grid > button:nth-child(3){animation-delay:.08s}.kpi-grid > button:nth-child(4){animation-delay:.12s}
   html[data-theme="dark"] body { background:#0B0B0D; color:#F7F4FA; }
   html[data-theme="dark"] body::before { opacity:.82; background:radial-gradient(760px 500px at 12% 0%,rgba(37,99,235,.34),transparent 68%),radial-gradient(680px 460px at 90% 76%,rgba(13,148,136,.22),transparent 68%),linear-gradient(118deg,transparent 0%,rgba(37,99,235,.08) 39%,rgba(13,148,136,.10) 50%,transparent 66%),linear-gradient(rgba(116,146,184,.10) 1px,transparent 1px),linear-gradient(90deg,rgba(116,146,184,.10) 1px,transparent 1px); background-size:auto,auto,180% 180%,42px 42px,42px 42px; }
@@ -463,9 +459,8 @@ function renderLogin(){
   return '<div class="login-shell">'+
     '<div class="login-card">'+
       '<div class="login-brand">'+
-        '<div class="login-brand-top"><div class="login-brand-mark">NX</div><span class="login-product-tag">Operação conectada</span></div>'+
+        '<div class="login-brand-mark">NX</div>'+
         '<div class="login-brand-title">Bem-vindo à<br>NEXO.</div>'+
-        '<div class="login-brand-subtitle">Acesso interno para acompanhar sua operação de entregas em tempo real.</div>'+
       '</div>'+
       (state.apiError ? '<div class="login-error">'+esc(state.apiError)+'</div>' : '')+
       '<form onsubmit="window.doLogin(event)">'+
@@ -473,7 +468,6 @@ function renderLogin(){
         '<div class="login-field"><label for="loginPassword">Senha</label><div class="login-password-wrap"><input id="loginPassword" type="'+(state.showPassword?'text':'password')+'" autocomplete="current-password" required><button type="button" onclick="window.togglePassword()">'+(state.showPassword?'Ocultar':'Mostrar')+'</button></div></div>'+ 
         '<button class="login-submit" type="submit" '+(state.loginLoading?'disabled':'')+'>'+(state.loginLoading?'Entrando...':'Entrar na plataforma')+'</button>'+
       '</form>'+
-      '<div class="login-security-note"><span class="login-security-dot"></span>Área segura para a sua equipe</div>'+
     '</div></div>';
 }
 

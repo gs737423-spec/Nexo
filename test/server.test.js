@@ -46,7 +46,7 @@ async function request(pathname, options = {}) {
 test("protege os dados e aceita uma sessão autenticada", async () => {
   const page = await fetch(baseUrl);
   assert.equal(page.status, 200);
-  assert.match(await page.text(), /Acesso interno/);
+  assert.match(await page.text(), /Bem-vindo à/);
 
   const bootstrap = await request("/api/bootstrap");
   assert.equal(bootstrap.response.status, 200);
