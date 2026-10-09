@@ -203,7 +203,16 @@ function dateOnly(isoDate) {
 function withCarrierProfile(carrier) {
   const profile = carrierProfileFor(carrier.name);
   if (providerForCarrier(carrier.name)) {
-    return { ...carrier, ...profile };
+    return {
+      ...carrier,
+      ...profile,
+      website: profile.website || carrier.website || "",
+      trackingUrl: profile.trackingUrl || carrier.trackingUrl || "",
+      trackingLabel: profile.trackingLabel || carrier.trackingLabel || "",
+      phone: profile.phone || carrier.phone || "",
+      email: profile.email || carrier.email || "",
+      contactSource: profile.contactSource || carrier.contactSource || "",
+    };
   }
   return {
     ...carrier,
@@ -219,6 +228,7 @@ function createInvoice(store, body, user) {
   const recipientDoc = optionalText(body.recipientDoc, 32);
   const order = optionalText(body.order, 64);
   const rca = optionalText(body.rca, 80);
+  const accessKey = optionalText(body.accessKey, 44);
   const etaInput = optionalText(body.eta, 16);
   const eta = etaInput ? toIsoDate(etaInput) : "";
   if (etaInput && !eta) throw new ApiError(422, "Data prevista inválida.");
@@ -248,6 +258,7 @@ function createInvoice(store, body, user) {
     series: "1",
     order,
     rca,
+    accessKey,
     issued,
     eta,
     issuer,

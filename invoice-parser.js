@@ -126,7 +126,7 @@ function financialCheck(value, items) {
 }
 
 function baseDraft() {
-  return { nf: "", carrier: "", recipient: "", doc: "", date: "", order: "", city: "", state: "", issuer: "", value: null, items: [] };
+  return { nf: "", carrier: "", recipient: "", doc: "", date: "", order: "", rca: "", accessKey: "", city: "", state: "", issuer: "", value: null, items: [] };
 }
 
 function parseNFeXml(source) {
@@ -141,6 +141,8 @@ function parseNFeXml(source) {
   draft.doc = formatDocument(xmlTag(source, "CNPJ", destination) || xmlTag(source, "CPF", destination));
   draft.date = formatDate(xmlTag(source, "dhEmi", ide) || xmlTag(source, "dEmi", ide));
   draft.order = xmlTag(source, "xPed");
+  draft.rca = xmlTag(source, "RCA") || xmlTag(source, "xRCA");
+  draft.accessKey = firstMatch(source, [/<infNFe[^>]*Id="NFe(\d{44})"/i, /<chNFe>(\d{44})<\/chNFe>/i]);
   draft.city = xmlTag(source, "xMun", destination);
   draft.state = xmlTag(source, "UF", destination).toUpperCase();
   draft.issuer = xmlTag(source, "xNome", xmlBlock(source, "emit"));
@@ -206,6 +208,14 @@ function parseNFeText(source) {
     /(?:N[ÚU]MERO DO )?PEDIDO\s*[:.-]?\s*([A-Z0-9-]{3,})\b/i,
     /\bXPED\s*[:.-]?\s*([A-Z0-9-]{3,})\b/i,
   ]);
+  draft.rca = firstMatch(documentText, [
+    /RCA\s+(?:DO\s+)?VENDEDOR\s*[:.-]?\s*([^\n]+)/i,
+    /VENDEDOR\s*\/\s*RCA\s*[:.-]?\s*([^\n]+)/i,
+  ]);
+  draft.accessKey = firstMatch(documentText, [
+    /CHAVE\s+DE\s+ACESSO\s*[:.-]?\s*((?:\d[ .]?){44})/i,
+    /DANFE[\s\S]{0,120}?((?:\d[ .]?){44})/i,
+  ]).replace(/\D/g, "");
   draft.issuer = firstMatch(documentText, [
     /IDENTIFICA[CÇ][ÃA]O\s+DO\s+EMITENTE\s*\n\s*([^\n]+)/i,
   ]);

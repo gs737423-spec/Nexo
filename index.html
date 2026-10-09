@@ -111,6 +111,7 @@
   @keyframes spin { to { transform:rotate(360deg); } }
   @keyframes pageEnter { from { opacity:0; transform:translateY(7px); } to { opacity:1; transform:translateY(0); } }
   @keyframes glowIn { from { opacity:0; transform:scale(.985); } to { opacity:1; transform:scale(1); } }
+  @keyframes copyPop { 0% { opacity:0; transform:translateY(3px) scale(.96); } 20%,80% { opacity:1; transform:translateY(0) scale(1); } 100% { opacity:0; transform:translateY(-3px) scale(.98); } }
   @keyframes ambientDrift { from { transform:translate3d(-8px,-4px,0); } to { transform:translate3d(10px,7px,0); } }
   @keyframes ambientPulse { 0%,100% { transform:scale(.96); opacity:.48; } 50% { transform:scale(1.04); opacity:.8; } }
   @keyframes ambientBeam { from { transform:translate3d(-8vw,-3vh,0) rotate(-12deg); opacity:.45; } to { transform:translate3d(9vw,4vh,0) rotate(-12deg); opacity:.9; } }
@@ -385,6 +386,16 @@ function themedStatus(status, fallback){
 var NOW = new Date();
 
 function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+function digitsOnly(value){ return String(value||'').replace(/\D/g,''); }
+window.copyDocument=async function(value,event){
+  var clean=digitsOnly(value), button=event&&event.currentTarget;
+  if(!clean) return;
+  try {
+    if(navigator.clipboard&&navigator.clipboard.writeText) await navigator.clipboard.writeText(clean);
+    else { var area=document.createElement('textarea'); area.value=clean; area.style.position='fixed'; area.style.opacity='0'; document.body.appendChild(area); area.select(); document.execCommand('copy'); area.remove(); }
+    if(button){ var feedback=button.querySelector('.copy-feedback'); if(feedback){ feedback.style.animation='none'; void feedback.offsetWidth; feedback.style.animation='copyPop 1.2s ease forwards'; } }
+  } catch(error) { state.apiError='Não foi possível copiar o CPF/CNPJ.'; render(); }
+};
 function parseD(iso){ if(!iso) return null; return iso.indexOf('T')>=0 ? new Date(iso) : new Date(iso+'T12:00:00'); }
 function fmtDate(iso){ var d=parseD(iso); if(!d) return '—'; return String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0')+'/'+d.getFullYear(); }
 function fmtShort(iso){ var d=parseD(iso); if(!d) return '—'; return String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0'); }
@@ -458,7 +469,7 @@ async function confirmUpload(){
   try {
     state.apiError='';
     var inv=await api('/invoices',jsonOptions({
-      nf:fieldValue('f_nf',d.nf),carrier:fieldValue('f_carrier',d.carrier),recipient:fieldValue('f_recipient',d.recipient),recipientDoc:fieldValue('f_doc',d.doc),date:fieldValue('f_date',d.date),order:fieldValue('f_order',d.order),rca:fieldValue('f_rca',''),eta:fieldValue('f_eta',''),tracking:fieldValue('f_tracking',''),cte:fieldValue('f_cte',''),city:(destination[0]||'').trim(),state:(destination[1]||'').trim(),issuer:d.issuer||'',value:d.value,items:d.items||[],documentName:d.documentName,documentContent:d.documentContent
+      nf:fieldValue('f_nf',d.nf),carrier:fieldValue('f_carrier',d.carrier),recipient:fieldValue('f_recipient',d.recipient),recipientDoc:fieldValue('f_doc',d.doc),date:fieldValue('f_date',d.date),order:fieldValue('f_order',d.order),rca:fieldValue('f_rca',d.rca||''),accessKey:d.accessKey||'',eta:fieldValue('f_eta',''),tracking:fieldValue('f_tracking',''),cte:fieldValue('f_cte',''),city:(destination[0]||'').trim(),state:(destination[1]||'').trim(),issuer:d.issuer||'',value:d.value,items:d.items||[],documentName:d.documentName,documentContent:d.documentContent
     }));
     await loadData();
     state.screen='detail'; state.selectedId=inv.id; state.uploadStep='idle'; state.uploadData=null;
@@ -697,7 +708,7 @@ function renderUpload(){
         field('Número da NF',ud.nf,'f_nf')+field('Transportadora',ud.carrier,'f_carrier')+
         field('Destinatário',ud.recipient,'f_recipient')+field('CNPJ/CPF',ud.doc,'f_doc')+
         field('Data de emissão',ud.date,'f_date')+field('Pedido',ud.order,'f_order')+
-        field('RCA do vendedor','', 'f_rca')+dateField('Data prevista de entrega','f_eta')+
+        field('RCA do vendedor',ud.rca||'', 'f_rca')+dateField('Data prevista de entrega','f_eta')+
         field('Código de rastreio (NF)',ud.nf, 'f_tracking')+
         field('CT-e','', 'f_cte')+
         '<div style="grid-column:span 2;padding:11px 12px;background:linear-gradient(120deg,#F8FBFF,#F5FAF7);border:1px solid #DCE9F7;border-radius:10px;font-size:13px"><strong>Valor da NF:</strong> '+fmtCurrency(ud.value)+' &nbsp; <strong>Itens identificados:</strong> '+(ud.items||[]).length+'<div style="font-size:11px;margin-top:6px">'+integrityMessage+'</div>'+missingMessage+(itemPreview?'<div style="margin-top:8px;font-size:11px;max-height:130px;overflow:auto">'+itemPreview+'</div>':'')+'<div style="font-size:11px;color:#667085;margin-top:5px">A soma dos produtos pode ser diferente do valor total da NF quando houver frete, desconto, seguro ou outros encargos. Para máxima precisão, prefira anexar o XML da NF-e.</div></div>'+ 
@@ -774,21 +785,22 @@ function renderDetail(){
     '</div>'+
     '<div>'+
       section('Nota fiscal','<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">'+
-        kv2('Número',inv.nf)+kv2('Série',inv.series)+kv2('Pedido',inv.order||'Não informado')+
-        (state.editingDetail?'<div><div style="font-size:11px;color:#667085">RCA do vendedor</div><input class="detail-edit-input" id="editRca" value="'+esc(inv.rca||'')+'" placeholder="Ex.: 105604" style="width:100%;padding:7px 9px;border:1px solid #DDE5F0;border-radius:8px;font-size:13px"></div>':(inv.rca?kvLink('RCA do vendedor',inv.rca,"window.goToVendor('"+esc(inv.rca).replace(/'/g,"\\'")+"')"):kv2('RCA do vendedor','Não informado')))+
-        (state.editingDetail?'<div><div style="font-size:11px;color:#667085">Data prevista</div><input class="detail-edit-input" id="editEta" type="date" value="'+esc(inv.eta||'')+'" style="width:100%;padding:7px 9px;border:1px solid #DDE5F0;border-radius:8px;font-size:13px"></div>':kv2('Data prevista',inv.eta?fmtDate(inv.eta):'Não informada'))+
-        kv2('Emissão',fmtDate(inv.issued))+kv2('Emissor',inv.issuer||'Não identificado')+kv2('Valor',fmtCurrency(inv.value),true)+kv2('Enviada por',inv.uploadedBy||inv.by||'Não identificado')+kv2('Enviada em',inv.uploadedAt?fmtDateTime(inv.uploadedAt):'Data anterior não registrada')+
+        (state.editingDetail?'<div><div style="font-size:11px;color:#667085">RCA do vendedor</div><input id="editRca" value="'+esc(inv.rca||'')+'" placeholder="Ex.: 105604" style="width:100%;padding:7px 9px;border:1px solid #DDE5F0;border-radius:8px;font-size:13px"></div>':(inv.rca?kvLink('RCA do vendedor',inv.rca,"window.goToVendor('"+esc(inv.rca).replace(/'/g,"\\'")+"')"):kv2('RCA do vendedor','Não informado')))+
+        (state.editingDetail?'<div><div style="font-size:11px;color:#667085">Data prevista</div><input id="editEta" type="date" value="'+esc(inv.eta||'')+'" style="width:100%;padding:7px 9px;border:1px solid #DDE5F0;border-radius:8px;font-size:13px"></div>':kv2('Data prevista',inv.eta?fmtDate(inv.eta):'Não informada'))+
+        kvCopy('Número',inv.nf)+kv2('Chave DANFE',inv.accessKey||'Não identificada')+kv2('Emissão',fmtDate(inv.issued))+kv2('Emissor',inv.issuer||'Não identificado')+kv2('Valor',fmtCurrency(inv.value),true)+kv2('Enviada por',inv.uploadedBy||inv.by||'Não identificado')+kv2('Enviada em',inv.uploadedAt?fmtDateTime(inv.uploadedAt):'Data anterior não registrada')+
         (state.editingDetail?'<div style="grid-column:1/-1"><button onclick="window.saveDetailEdit()" style="padding:8px 12px;border:0;border-radius:8px;background:#1769E0;color:#fff;font-size:12px;font-weight:700">Salvar dados</button></div>':'')+
         '<div style="grid-column:1/-1;margin-top:4px"><a href="/api/invoices/'+inv.id+'/document" onclick="window.openInvoiceDocument('+inv.id+',event)" style="display:inline-flex;align-items:center;gap:7px;padding:9px 12px;border:1px solid #DDE5F0;border-radius:9px;color:#1769E0;font-size:12px;font-weight:700">Abrir PDF/XML original</a></div>'+ 
       '</div>')+
       section('Destinatário','<div style="display:flex;flex-direction:column;gap:10px">'+
-        kvLink('Nome',inv.recipient,"window.goToClient('"+esc(inv.recipient).replace(/'/g,"\\'")+"')")+kv2('CNPJ/CPF',inv.recipientDoc)+kv2('Cidade/UF',inv.city+'/'+inv.state)+
+        kvLink('Nome',inv.recipient,"window.goToClient('"+esc(inv.recipient).replace(/'/g,"\\'")+"')")+kvCopy('CNPJ/CPF',inv.recipientDoc)+kv2('Cidade/UF',inv.city+'/'+inv.state)+
       '</div>')+
       section('Transportadora e rastreio','<div style="display:flex;flex-direction:column;gap:10px">'+
         '<div style="font-size:14px;font-weight:600">'+esc(c.name)+'</div>'+
-        '<div style="display:flex;align-items:center;gap:8px">'+ICON_PHONE+'<span style="font-size:13px">'+esc(c.phone||'Não cadastrado')+'</span></div>'+
-        '<div style="display:flex;align-items:center;gap:8px">'+ICON_MAIL+'<span style="font-size:13px">'+esc(c.email||'Não cadastrado')+'</span></div>'+
+        carrierContact(c.phone,c.phone?'tel:'+phoneDigits(c.phone):'',ICON_PHONE)+
+        carrierContact(c.email,c.email?'mailto:'+c.email:'',ICON_MAIL)+
+        (c.phone ? '<a href="https://wa.me/'+phoneDigits(c.phone)+'" target="_blank" rel="noopener noreferrer" style="display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:9px 10px;border-radius:8px;background:#EAF8F0;color:#16803C;font-size:12px;font-weight:700">Abrir WhatsApp</a>' : '')+
         (c.contactSource ? '<div style="font-size:11px;color:#667085">Fonte do contato: '+esc(c.contactSource)+'</div>' : '')+
+        (c.website ? '<a href="'+esc(c.website)+'" target="_blank" rel="noopener noreferrer" style="font-size:12px;color:#1769E0">Site da transportadora</a>' : '')+
         (c.trackingUrl ? '<a href="'+esc(c.trackingUrl)+'" target="_blank" rel="noopener noreferrer" style="display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:10px;border-radius:8px;background:#EAF2FF;color:#1769E0;font-size:13px;font-weight:700">'+ICON_LINK+esc(c.trackingLabel||'Rastrear no portal recomendado')+'</a>' : '')+
         '<div style="display:flex;gap:8px;flex-wrap:wrap"><a href="https://ssw.inf.br/2/rastreamento" target="_blank" rel="noopener noreferrer" style="font-size:12px;color:#526078">Portal SSW</a><span style="color:#CBD5E1">•</span><a href="https://www.track3r.com.br/rastreamento/" target="_blank" rel="noopener noreferrer" style="font-size:12px;color:#526078">Track3r</a></div>'+
         '<div style="font-size:11px;color:#667085">Use os portais alternativos somente se a transportadora operar neles.</div>'+
@@ -808,7 +820,12 @@ function section(title,inner){
 }
 function kv(label,val){ return '<div><div style="font-size:11px;color:#667085;margin-bottom:2px">'+label+'</div><div style="font-size:14px;font-weight:500">'+esc(val)+'</div></div>'; }
 function kv2(label,val,bold){ return '<div><div style="font-size:11px;color:#667085">'+label+'</div><div style="font-size:13px;font-weight:'+(bold?'500':'400')+'">'+esc(val)+'</div></div>'; }
+function kvCopy(label,val){ return '<div><div style="font-size:11px;color:#667085">'+label+'</div><button type="button" onclick="window.copyDocument(\''+esc(val).replace(/'/g,"\\'")+\',event)" style="position:relative;padding:0;border:0;background:transparent;color:inherit;font-size:13px;font-weight:400;text-align:left;cursor:pointer" title="Copiar sem pontuação">'+esc(val||'Não informado')+'<span class="copy-feedback" style="position:absolute;left:calc(100% + 7px);top:0;white-space:nowrap;color:#22C55E;font-size:11px;font-weight:700;opacity:0">Copiado</span></button></div>'; }
 function kvLink(label,val,onclick){ return '<div><div style="font-size:11px;color:#667085">'+label+'</div><button onclick="'+onclick+'" style="padding:0;border:0;background:transparent;color:#1769E0;font-size:13px;font-weight:700;text-align:left">'+esc(val)+'</button></div>'; }
+function phoneDigits(value){ return String(value||'').replace(/\D/g,''); }
+function carrierContact(value,href,icon){
+  return '<div style="display:flex;align-items:center;gap:8px">'+icon+(value?'<a href="'+esc(href)+'" style="font-size:13px;color:#1769E0;font-weight:600">'+esc(value)+'</a>':'<span style="font-size:13px">Não cadastrado</span>')+'</div>';
+}
 
 function renderDirectory(kind,key){
   var isClient=kind==='client';
