@@ -31,3 +31,16 @@ test("o adaptador catch-all aguarda a resposta assíncrona do servidor", async (
   assert.equal(response.status, 200);
   assert.equal(JSON.parse(response.body).status, "ok");
 });
+
+test("a rota dedicada de parsing encaminha a requisição para o servidor", async () => {
+  const handler = require("../api/uploads/parse.js");
+  const request = { method: "POST", url: "/api/uploads/parse", headers: {} };
+  const response = new EventEmitter();
+  response.writeHead = (status, headers) => { response.status = status; response.headers = headers; };
+  response.end = (body) => { response.body = body; response.emit("finish"); };
+
+  await handler(request, response);
+
+  assert.equal(response.status, 401);
+  assert.match(response.body, /sessão expirou/);
+});
