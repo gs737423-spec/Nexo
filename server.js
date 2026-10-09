@@ -437,6 +437,8 @@ function createNexoServer(options = {}) {
         if (existing) {
           if (!body.documentContent) throw new ApiError(409, "Esta NF já está cadastrada. Abra a nota existente para editá-la ou anexe o PDF original nela.");
           existing.document = invoiceDocument(body);
+          if (!existing.rca && body.rca) existing.rca = optionalText(body.rca, 80);
+          if (!existing.accessKey && body.accessKey) existing.accessKey = optionalText(body.accessKey, 44);
           existing.uploadedBy = user.name;
           existing.uploadedAt = new Date().toISOString();
           await saveStore(store);
