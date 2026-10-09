@@ -104,6 +104,25 @@ function writeStore(dataFile, data) {
   fs.renameSync(temporaryFile, dataFile);
 }
 
+async function backfillMissingRca(store) {
+  let updated = false;
+  for (const invoice of store.invoices || []) {
+    if (invoice.rca || !invoice.document?.content) continue;
+    const match = /^data:application\/(pdf|xml);base64,(.+)$/i.exec(invoice.document.content);
+    if (!match) continue;
+    try {
+      const draft = await parseInvoiceFile({ fileName: invoice.document.name, base64: match[2] });
+      if (draft.rca) {
+        invoice.rca = draft.rca;
+        updated = true;
+      }
+    } catch (error) {
+      // Um documento antigo inválido não deve impedir o carregamento da plataforma.
+    }
+  }
+  return updated;
+}
+
 function requiredText(value, label, maxLength) {
   if (typeof value !== "string") throw new ApiError(422, `${label} é obrigatório.`);
   const normalized = value.trim();
@@ -290,12 +309,20 @@ function createNexoServer(options = {}) {
   const tracking = options.trackingService || createTrackingService();
   const reportsOwnerEmail = String(options.reportsOwnerEmail || process.env.NEXO_REPORTS_OWNER_EMAIL || "gs737423@gmail.com").trim().toLowerCase();
   const canViewReports = (user) => Boolean(user && user.email === reportsOwnerEmail);
+  let rcaBackfillDone = false;
   const loadStore = async () => {
-    if (!database) return readStore(dataFile);
-    await database.initialize();
-    const store = await database.read("store");
-    if (store) return store;
-    const initial = clone(seed); await database.write("store", initial); return initial;
+    let store;
+    if (!database) store = readStore(dataFile);
+    else {
+      await database.initialize();
+      store = await database.read("store");
+      if (!store) { store = clone(seed); await database.write("store", store); }
+    }
+    if (!rcaBackfillDone) {
+      rcaBackfillDone = true;
+      if (await backfillMissingRca(store)) await saveStore(store);
+    }
+    return store;
   };
   const saveStore = async (store) => database ? database.write("store", store) : writeStore(dataFile, store);
 
