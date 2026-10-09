@@ -22,6 +22,11 @@ function firstMatch(source, patterns) {
   return "";
 }
 
+function accessKey(value) {
+  const digits = String(value || "").replace(/\D/g, "");
+  return digits.length >= 44 ? digits.slice(0, 44) : "";
+}
+
 function section(source, startPattern, maxLength = 700) {
   const match = startPattern.exec(source);
   return match ? source.slice(match.index, match.index + maxLength) : "";
@@ -142,7 +147,7 @@ function parseNFeXml(source) {
   draft.date = formatDate(xmlTag(source, "dhEmi", ide) || xmlTag(source, "dEmi", ide));
   draft.order = xmlTag(source, "xPed");
   draft.rca = xmlTag(source, "RCA") || xmlTag(source, "xRCA");
-  draft.accessKey = firstMatch(source, [/<infNFe[^>]*Id="NFe(\d{44})"/i, /<chNFe>(\d{44})<\/chNFe>/i]);
+  draft.accessKey = accessKey(firstMatch(source, [/<infNFe[^>]*Id=['"]NFe(\d{44})['"]/i, /<chNFe>(\d{44})<\/chNFe>/i]));
   draft.city = xmlTag(source, "xMun", destination);
   draft.state = xmlTag(source, "UF", destination).toUpperCase();
   draft.issuer = xmlTag(source, "xNome", xmlBlock(source, "emit"));
@@ -209,13 +214,15 @@ function parseNFeText(source) {
     /\bXPED\s*[:.-]?\s*([A-Z0-9-]{3,})\b/i,
   ]);
   draft.rca = firstMatch(documentText, [
-    /RCA\s+(?:DO\s+)?VENDEDOR\s*[:.-]?\s*([^\n]+)/i,
-    /VENDEDOR\s*\/\s*RCA\s*[:.-]?\s*([^\n]+)/i,
+    /RCA(?:\s+DO)?\s+VENDEDOR[ \t]*[:.-]?[ \t]*(?:\r?\n[ \t]*)?([^\r\n]{1,80})/i,
+    /VENDEDOR[ \t]*\/[ \t]*RCA[ \t]*[:.-]?[ \t]*(?:\r?\n[ \t]*)?([^\r\n]{1,80})/i,
+    /\bRCA[ \t]*[:.-][ \t]*(?:\r?\n[ \t]*)?([^\r\n]{1,80})/i,
+    /C[ÓO]DIGO[ \t]+(?:DO[ \t]+)?VENDEDOR[ \t]*[:.-]?[ \t]*(?:\r?\n[ \t]*)?([^\r\n]{1,80})/i,
   ]);
-  draft.accessKey = firstMatch(documentText, [
-    /CHAVE\s+DE\s+ACESSO\s*[:.-]?\s*((?:\d[ .]?){44})/i,
-    /DANFE[\s\S]{0,120}?((?:\d[ .]?){44})/i,
-  ]).replace(/\D/g, "");
+  draft.accessKey = accessKey(firstMatch(documentText, [
+    /CHAVE[ \t]+DE[ \t]+ACESSO[ \t]*[:.-]?[ \t]*([\d .\r\n]{44,})/i,
+    /DANFE[\s\S]{0,160}?([\d .\r\n]{44,})/i,
+  ]));
   draft.issuer = firstMatch(documentText, [
     /IDENTIFICA[CÇ][ÃA]O\s+DO\s+EMITENTE\s*\n\s*([^\n]+)/i,
   ]);
