@@ -1,6 +1,7 @@
 "use strict";
 
 const assert = require("node:assert/strict");
+const { EventEmitter } = require("node:events");
 const test = require("node:test");
 
 test("a rota nativa de status encontra a NF pela URL sem contexto da Vercel", async () => {
@@ -16,4 +17,17 @@ test("a rota nativa de status encontra a NF pela URL sem contexto da Vercel", as
   const malformed = await POST(new Request("https://nexo.test/api/invoices/not-a-number/status", { method: "POST" }));
   assert.equal(malformed.status, 422);
   assert.deepEqual(await malformed.json(), { error: "Nota fiscal inválida." });
+});
+
+test("o adaptador catch-all aguarda a resposta assíncrona do servidor", async () => {
+  const handler = require("../api/[...path].js");
+  const request = { method: "GET", url: "/api/health", headers: {} };
+  const response = new EventEmitter();
+  response.writeHead = (status, headers) => { response.status = status; response.headers = headers; };
+  response.end = (body) => { response.body = body; response.emit("finish"); };
+
+  await handler(request, response);
+
+  assert.equal(response.status, 200);
+  assert.equal(JSON.parse(response.body).status, "ok");
 });

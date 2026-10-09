@@ -6,7 +6,7 @@
 // long-lived local listener.
 const application = require("../server");
 
-module.exports = (request, response) => {
+module.exports = async (request, response) => {
   const url = new URL(request.url, "http://localhost");
   const forwardedPath = url.searchParams.get("__nexo_api_path");
   if (forwardedPath) {
@@ -14,5 +14,20 @@ module.exports = (request, response) => {
     const query = url.searchParams.toString();
     request.url = `/api/${forwardedPath.replace(/^\/+/, "")}${query ? `?${query}` : ""}`;
   }
-  application.emit("request", request, response);
+  await new Promise((resolve, reject) => {
+    const finish = () => {
+      response.removeListener("finish", finish);
+      response.removeListener("close", finish);
+      resolve();
+    };
+    response.once("finish", finish);
+    response.once("close", finish);
+    try {
+      application.emit("request", request, response);
+    } catch (error) {
+      response.removeListener("finish", finish);
+      response.removeListener("close", finish);
+      reject(error);
+    }
+  });
 };

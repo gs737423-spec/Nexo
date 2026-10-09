@@ -53,7 +53,7 @@ test("protege os dados e aceita uma sessão autenticada", async () => {
   assert.equal(bootstrap.body.carriers.length, 4);
   assert.equal(bootstrap.body.invoices.length, 15);
   assert.equal(bootstrap.body.carriers[0].phone, "(11) 2121-6161");
-  assert.equal(bootstrap.body.carriers[0].email, "");
+  assert.equal(bootstrap.body.carriers[0].email, "sac@jamef.com.br");
   assert.equal(bootstrap.body.carriers[0].contactSource, "Canal oficial");
   assert.equal(bootstrap.body.user.reportsAccess, true);
 
