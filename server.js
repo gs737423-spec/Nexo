@@ -107,13 +107,15 @@ function writeStore(dataFile, data) {
 async function backfillMissingRca(store) {
   let updated = false;
   for (const invoice of store.invoices || []) {
-    if (invoice.rca || !invoice.document?.content) continue;
+    if ((!invoice.rca && !invoice.accessKey) && !invoice.document?.content) continue;
+    if (invoice.rca && invoice.accessKey) continue;
     const match = /^data:application\/(pdf|xml);base64,(.+)$/i.exec(invoice.document.content);
     if (!match) continue;
     try {
       const draft = await parseInvoiceFile({ fileName: invoice.document.name, base64: match[2] });
-      if (draft.rca) {
-        invoice.rca = draft.rca;
+      if (draft.rca || draft.accessKey) {
+        if (!invoice.rca && draft.rca) invoice.rca = draft.rca;
+        if (!invoice.accessKey && draft.accessKey) invoice.accessKey = draft.accessKey;
         updated = true;
       }
     } catch (error) {
