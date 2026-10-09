@@ -74,6 +74,25 @@ test("protege os dados e aceita uma sessão autenticada", async () => {
   assert.equal(unauthorized.status, 401);
 });
 
+test("administrador cria usuária operacional sem acesso a reports", async () => {
+  const created = await request("/api/admin/users", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ name: "Usuária Operacional", email: "operacao@empresa.com", password: "SenhaOperacao123!" }),
+  });
+  assert.equal(created.response.status, 201);
+  assert.equal(created.body.user.role, "assistant");
+  const listed = await request("/api/admin/users");
+  assert.ok(listed.body.users.some((user) => user.email === "operacao@empresa.com"));
+  const login = await request("/api/auth/login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email: "operacao@empresa.com", password: "SenhaOperacao123!" }),
+  });
+  assert.equal(login.response.status, 200);
+  assert.equal(login.body.user.role, "assistant");
+});
+
 test("cria a transportadora identificada na NF, persiste a nota e registra atualização", async () => {
   const created = await request("/api/invoices", {
     method: "POST",

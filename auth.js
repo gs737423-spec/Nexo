@@ -73,6 +73,15 @@ function createAuthService({ dataDirectory }) {
       saveUsers([user]); audit({ userId: user.id, action: "USER_PROVISIONED", resource: "user" });
       return publicUser(user);
     },
+    createUser({ name, email, password, role = "assistant" }) {
+      if (!roles.has(role)) throw new Error("Perfil de usuário inválido.");
+      if (!validatePassword(password)) throw new Error("A senha deve ter 10 a 256 caracteres, com maiúscula, minúscula, número e símbolo.");
+      const normalized = String(email || "").trim().toLowerCase();
+      if (users().some((user) => user.email === normalized)) throw new Error("Já existe uma conta com este e-mail.");
+      const user = { id: crypto.randomUUID(), name: String(name || "").trim(), email: normalized, role, active: true, passwordHash: hashPassword(password), createdAt: new Date().toISOString() };
+      saveUsers([...users(), user]); audit({ userId: user.id, action: "USER_CREATED", resource: "user" });
+      return publicUser(user);
+    },
     login({ email, password, ip }) {
       const normalized = String(email || "").trim().toLowerCase();
       if (!checkAttempts(ip)) { audit({ action: "RATE_LIMITED_LOGIN", resource: "session" }); return null; }

@@ -234,11 +234,13 @@
   html[data-theme="dark"] .data-table { border-color:#2B282E !important; box-shadow:none !important; }
   html[data-theme="dark"] .data-table { background:#151416 !important; }
   html[data-theme="dark"] .kpi-card { border-left:1px solid #2B282E !important; border-radius:18px !important; min-height:112px !important; }
-  html[data-theme="dark"] .kpi-card.kpi-transito { background:radial-gradient(155px 110px at 100% 0%,rgba(161,0,255,.18),transparent 72%),#151416 !important; }
-  html[data-theme="dark"] .kpi-card.kpi-entregues { background:radial-gradient(155px 110px at 100% 0%,rgba(33,214,138,.13),transparent 72%),#151416 !important; }
-  html[data-theme="dark"] .kpi-card.kpi-atrasadas { background:radial-gradient(155px 110px at 100% 0%,rgba(255,89,100,.14),transparent 72%),#151416 !important; }
-  html[data-theme="dark"] .kpi-card.kpi-ocorrencias { background:radial-gradient(155px 110px at 100% 0%,rgba(243,191,69,.13),transparent 72%),#151416 !important; }
-  html[data-theme="dark"] .kpi-card:hover { background:#1B181D !important; border-color:#6F13A7 !important; box-shadow:0 10px 28px rgba(0,0,0,.25) !important; }
+  /* KPI cards stay quiet: no colored radial glow or hover halo. */
+  html[data-theme="dark"] .kpi-card,
+  html[data-theme="dark"] .kpi-card.kpi-transito,
+  html[data-theme="dark"] .kpi-card.kpi-entregues,
+  html[data-theme="dark"] .kpi-card.kpi-atrasadas,
+  html[data-theme="dark"] .kpi-card.kpi-ocorrencias { background:#171519 !important; border-color:#343038 !important; box-shadow:0 8px 22px rgba(0,0,0,.18) !important; backdrop-filter:none; -webkit-backdrop-filter:none; }
+  html[data-theme="dark"] .kpi-card:hover { background:#1B181D !important; border-color:#514859 !important; box-shadow:0 10px 24px rgba(0,0,0,.22) !important; }
   html[data-theme="dark"] .filter-tabs { background:#151416 !important; border-color:#2B282E !important; border-radius:14px !important; }
   html[data-theme="dark"] .filter-tab:hover { background:#24122F !important; }
   html[data-theme="dark"] .table-header { background:#111012 !important; border-color:#2B282E !important; }
@@ -358,7 +360,7 @@
 <script>
 "use strict";
 
-var state = { loggedIn:false, screen:'dashboard', selectedId:null, clientKey:'', vendorKey:'', editingDetail:false, search:'', filter:'all', filterExpanded:false, carrierFilter:'all', deadlineFilter:'all', sortDirection:'asc', uploadStep:'idle', processingStep:0, uploadData:null, dragOver:false, session:null, apiError:'', accountMenu:false, loginLoading:false, showPassword:false, report:null, manualStatus:null, theme:'dark' };
+var state = { loggedIn:false, screen:'dashboard', selectedId:null, clientKey:'', vendorKey:'', editingDetail:false, search:'', filter:'all', filterExpanded:false, carrierFilter:'all', deadlineFilter:'all', sortDirection:'asc', uploadStep:'idle', processingStep:0, uploadData:null, dragOver:false, session:null, users:[], apiError:'', accountMenu:false, loginLoading:false, showPassword:false, report:null, manualStatus:null, theme:'dark' };
 if(typeof document!=='undefined'&&document.documentElement) document.documentElement.dataset.theme=state.theme;
 
 var carriers = [];
@@ -549,6 +551,7 @@ function renderNav(){
   var dark=state.theme==='dark', activeBg=dark?'#8B00E6':'#EAF2FF', activeText=dark?'#FFFFFF':'#1769E0', navText=dark?'#A9A2AF':'#526078';
   var user=(state.session||{}).user||{};
   var initial=(user.name||'U').trim().charAt(0).toUpperCase();
+  var canManageUsers=user.role==='admin';
   return '<nav style="display:flex;align-items:center;justify-content:space-between;padding:0 24px;height:64px;background:#fff;border-bottom:1px solid #E2E8F0;box-shadow:0 2px 8px rgba(15,23,42,.025);position:sticky;top:0;z-index:100">'+
     '<div style="display:flex;align-items:center;gap:28px">'+
       '<div style="font-size:21px;font-weight:800;letter-spacing:-0.055em;cursor:pointer" onclick="window.goToDashboard()">NEXO</div>'+
@@ -559,7 +562,7 @@ function renderNav(){
         (user.reportsAccess?'<button onclick="window.goToReports()" style="padding:10px 14px;border-radius:12px;border:none;font-size:13px;font-weight:700;background:'+(state.screen==='reports'?activeBg:'transparent')+';color:'+(state.screen==='reports'?activeText:navText)+'">Reports</button>':'')+
       '</div></div>'+
     '<div style="display:flex;align-items:center;gap:14px"><button class="secondary-action" onclick="window.startReport()" style="border:1px solid #DDE5F0;background:#fff;color:#344054;border-radius:12px;padding:9px 12px;font-size:12px;font-weight:700">Reportar erro</button><div style="position:relative"><button onclick="window.toggleAccountMenu()" style="display:flex;align-items:center;gap:8px;border:none;background:transparent;color:#344054;font-size:13px;font-weight:700"><span style="width:30px;height:30px;border-radius:50%;background:#EAF2FF;color:#1769E0;display:flex;align-items:center;justify-content:center;font-size:12px">'+esc(initial)+'</span><span>'+esc(user.name||'Conta')+'</span><span style="color:#7B879B">⌄</span></button>'+
-    (state.accountMenu?'<div style="position:absolute;right:0;top:40px;width:220px;background:#fff;border:1px solid #E5EAF0;border-radius:10px;padding:8px;box-shadow:0 8px 24px rgba(15,23,42,.10)"><div style="padding:8px 10px;border-bottom:1px solid #EEF1F5"><div style="font-size:13px;font-weight:700">'+esc(user.name||'')+'</div><div style="font-size:11px;color:#7B879B;margin-top:2px">'+esc(user.role||'')+'</div></div><button onclick="window.logout()" style="margin-top:4px;width:100%;text-align:left;padding:8px 10px;background:transparent;border:none;border-radius:6px;color:#B42318;font-size:13px">Sair</button></div>':'')+'</div>'+ 
+    (state.accountMenu?'<div style="position:absolute;right:0;top:40px;width:220px;background:#fff;border:1px solid #E5EAF0;border-radius:10px;padding:8px;box-shadow:0 8px 24px rgba(15,23,42,.10)"><div style="padding:8px 10px;border-bottom:1px solid #EEF1F5"><div style="font-size:13px;font-weight:700">'+esc(user.name||'')+'</div><div style="font-size:11px;color:#7B879B;margin-top:2px">'+esc(user.role||'')+'</div></div>'+(canManageUsers?'<button onclick="window.goToUsers()" style="margin-top:4px;width:100%;text-align:left;padding:8px 10px;background:transparent;border:none;border-radius:6px;color:#344054;font-size:13px">Gerenciar usuários</button>':'')+'<button onclick="window.logout()" style="margin-top:4px;width:100%;text-align:left;padding:8px 10px;background:transparent;border:none;border-radius:6px;color:#B42318;font-size:13px">Sair</button></div>':'')+'</div>'+ 
   '</div></nav>';
 }
 
@@ -843,6 +846,12 @@ function renderRcaDirectory(){
   var entries=Object.keys(groups).sort().map(function(key){ var group=groups[key]; return '<button onclick="window.goToVendor(\''+esc(key).replace(/'/g,"\\'")+'\')" style="display:flex;align-items:center;justify-content:space-between;gap:18px;width:100%;padding:14px 16px;border:0;border-top:1px solid rgba(148,163,184,.14);background:transparent;color:inherit;text-align:left"><span><strong style="display:block;font-size:13px">'+esc(group.name)+'</strong><small style="display:block;margin-top:4px;color:#8F8697;font-size:11px">'+group.count+' nota(s) vinculada(s)</small></span><span style="display:flex;align-items:center;gap:18px"><strong style="font-size:12px">'+fmtCurrency(group.total)+'</strong><span style="color:#A717F4;font-size:18px">›</span></span></button>'; }).join('');
   return '<div class="page-enter" style="max-width:760px"><div style="margin-bottom:18px"><h1 style="font-size:24px;margin:0">RCAs</h1><p style="color:#667085;font-size:13px;margin:6px 0 0">Acesse as notas fiscais agrupadas por vendedor.</p></div><div class="panel" style="background:#fff;border:1px solid #E4EAF2;border-radius:14px;padding:0;overflow:hidden;box-shadow:0 12px 28px rgba(15,23,42,.055)"><div style="padding:14px 16px;font-size:12px;color:#667085;font-weight:700">'+Object.keys(groups).length+' RCA(s) com notas vinculadas</div>'+(entries||'<div style="padding:30px;text-align:center;color:#667085">Nenhum RCA informado nas notas.</div>')+'</div></div>';
 }
+
+function renderUsers(){
+  var users=state.users||[];
+  var rows=users.map(function(user){ return '<div style="display:flex;align-items:center;justify-content:space-between;gap:16px;padding:13px 0;border-top:1px solid #302B35"><div><div style="color:#F4EFF6;font-size:13px;font-weight:800">'+esc(user.name)+'</div><div style="margin-top:3px;color:#A9A2AF;font-size:11px">'+esc(user.email)+'</div></div><span style="padding:4px 8px;border-radius:999px;background:'+(user.role==='admin'?'#2B1638':'#1B2A23')+';color:'+(user.role==='admin'?'#DDA2FF':'#87E1AD')+';font-size:10px;font-weight:800">'+(user.role==='admin'?'Administrador':'Usuária comum')+'</span></div>'; }).join('') || '<div style="padding:24px 0;color:#A9A2AF;font-size:13px">Nenhuma conta cadastrada.</div>';
+  return '<div class="page-enter" style="max-width:820px"><button onclick="window.goToDashboard()" style="border:1px solid rgba(255,255,255,.14);background:transparent;border-radius:9px;padding:8px 12px;color:#CFC6D2;font-weight:700">← Voltar</button><div style="margin:22px 0"><h1 style="font-size:24px;margin:0">Usuários</h1><p style="color:#9B93A3;font-size:13px;margin:6px 0 0">Contas que acompanham e atualizam as entregas.</p></div><div class="panel" style="padding:20px;margin-bottom:16px"><h2 style="margin:0 0 16px">Nova usuária operacional</h2><form onsubmit="window.createUserFromUI(event)" style="display:grid;grid-template-columns:1fr 1fr;gap:12px"><input id="newUserName" required placeholder="Nome completo" style="padding:11px 12px;border-radius:10px"><input id="newUserEmail" type="email" required placeholder="E-mail" style="padding:11px 12px;border-radius:10px"><input id="newUserPassword" type="password" required placeholder="Senha segura" style="padding:11px 12px;border-radius:10px"><button type="submit" style="border:0;border-radius:10px;background:#A100FF;color:#fff;font-size:12px;font-weight:800">Criar usuária comum</button></form><div style="margin-top:10px;color:#9B93A3;font-size:11px">Pode acompanhar e enviar notas fiscais. Não possui acesso a Reports.</div></div><div class="panel" style="padding:20px"><h2 style="margin:0 0 4px">Contas cadastradas</h2>'+rows+'</div></div>';
+}
 function timelineItem(label,date,loc,dotBg,dotBorder,labelColor,labelWeight,showLine){
   var pending=dotBg==='transparent'; var current=!pending && labelWeight==='600';
   return '<div class="timeline-step '+(pending?'pending':current?'current':'complete')+'">'+
@@ -856,7 +865,7 @@ function timelineItem(label,date,loc,dotBg,dotBorder,labelColor,labelWeight,show
 function render(){
   var root=document.getElementById('root');
   if(!state.loggedIn){ root.innerHTML=renderLogin(); return; }
-  var body = state.screen==='dashboard' ? renderDashboard() : state.screen==='upload' ? renderUpload() : state.screen==='reports' ? renderReports() : state.screen==='rcas' ? renderRcaDirectory() : state.screen==='client' ? renderDirectory('client',state.clientKey) : state.screen==='vendor' ? renderDirectory('vendor',state.vendorKey) : renderDetail();
+  var body = state.screen==='dashboard' ? renderDashboard() : state.screen==='upload' ? renderUpload() : state.screen==='reports' ? renderReports() : state.screen==='users' ? renderUsers() : state.screen==='rcas' ? renderRcaDirectory() : state.screen==='client' ? renderDirectory('client',state.clientKey) : state.screen==='vendor' ? renderDirectory('vendor',state.vendorKey) : renderDetail();
   var error = state.apiError ? '<div style="margin-bottom:16px;padding:11px 14px;background:#FEF2F2;border:1px solid #FECACA;border-radius:8px;color:#991B1B;font-size:13px">'+esc(state.apiError)+'</div>' : '';
   root.innerHTML = renderNav() + '<main class="page-enter" style="max-width:1200px;margin:0 auto;padding:28px 24px 40px;min-height:calc(100vh - 70px)">'+error+body+'</main>'+renderReportOverlay();
 }
@@ -871,6 +880,18 @@ window.doLogin=async function(e){
 };
 window.togglePassword=function(){ var email=fieldValue('loginEmail',''), password=fieldValue('loginPassword',''); state.showPassword=!state.showPassword; render(); var emailInput=document.getElementById('loginEmail'), passwordInput=document.getElementById('loginPassword'); if(emailInput) emailInput.value=email; if(passwordInput){ passwordInput.value=password; passwordInput.focus(); } };
 window.toggleAccountMenu=function(){ state.accountMenu=!state.accountMenu; render(); };
+window.goToUsers=async function(){
+  try { state.apiError=''; var response=await api('/admin/users'); state.users=response.users||[]; state.screen='users'; state.accountMenu=false; render(); }
+  catch(error) { state.apiError=error.message; render(); }
+};
+window.createUserFromUI=async function(event){
+  event.preventDefault();
+  try {
+    state.apiError='';
+    await api('/admin/users',jsonOptions({ name:fieldValue('newUserName',''), email:fieldValue('newUserEmail',''), password:fieldValue('newUserPassword','') }));
+    var response=await api('/admin/users'); state.users=response.users||[]; render();
+  } catch(error) { state.apiError=error.message; render(); }
+};
 window.logout=async function(){ try { await api('/auth/logout',jsonOptions({})); } catch(error) {} state.loggedIn=false; state.session=null; state.accountMenu=false; state.apiError=''; render(); };
 function pushAppHistory(screen,extra){ history.pushState({nexo:true,screen:screen,extra:extra||null},'',location.pathname+'#'+screen); }
 window.goToDashboard=function(fromPop){ state.apiError=''; state.screen='dashboard'; state.selectedId=null; if(!fromPop) pushAppHistory('dashboard'); render(); };
@@ -884,7 +905,7 @@ window.goToDetail=function(id,fromPop){ state.screen='detail'; state.selectedId=
 window.goToClient=function(key,fromPop){ state.clientKey=key; state.screen='client'; if(!fromPop) pushAppHistory('client',{key:key}); render(); };
 window.goToVendor=function(key,fromPop){ state.vendorKey=key; state.screen='vendor'; if(!fromPop) pushAppHistory('vendor',{key:key}); render(); };
 window.goToRcas=function(fromPop){ state.screen='rcas'; if(!fromPop) pushAppHistory('rcas'); render(); };
-if (window.addEventListener) window.addEventListener('popstate',function(event){ var s=event.state||{}; if(!state.loggedIn) return; if(s.screen==='detail') window.goToDetail(s.extra&&s.extra.id,true); else if(s.screen==='client') window.goToClient(s.extra&&s.extra.key,true); else if(s.screen==='vendor') window.goToVendor(s.extra&&s.extra.key,true); else if(s.screen==='rcas') window.goToRcas(true); else if(s.screen==='upload') window.goToUpload(true); else if(s.screen==='reports') window.goToReports(true); else window.goToDashboard(true); });
+if (window.addEventListener) window.addEventListener('popstate',function(event){ var s=event.state||{}; if(!state.loggedIn) return; if(s.screen==='detail') window.goToDetail(s.extra&&s.extra.id,true); else if(s.screen==='client') window.goToClient(s.extra&&s.extra.key,true); else if(s.screen==='vendor') window.goToVendor(s.extra&&s.extra.key,true); else if(s.screen==='rcas') window.goToRcas(true); else if(s.screen==='upload') window.goToUpload(true); else if(s.screen==='reports') window.goToReports(true); else if(s.screen==='users') window.goToUsers(true); else window.goToDashboard(true); });
 window.toggleDetailEdit=function(){ state.editingDetail=!state.editingDetail; state.apiError=''; render(); };
 window.selectManualStatus=function(status){ state.manualStatus=status; state.apiError=''; render(); };
 window.saveDetailEdit=async function(){

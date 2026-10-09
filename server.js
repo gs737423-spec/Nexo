@@ -375,6 +375,18 @@ function createNexoServer(options = {}) {
           sendJson(response, 200, { users: await auth.listUsers() });
           return;
         }
+        if (request.method === "POST" && pathname === "/api/admin/users") {
+          if (!auth.requireRole(user, ["admin"])) throw new ApiError(403, "Apenas administradores podem criar usuários.");
+          const body = await readJsonBody(request);
+          const name = requiredText(body.name, "Nome", 120);
+          const email = requiredText(body.email, "E-mail", 160);
+          const existingUsers = await auth.listUsers();
+          if (existingUsers.some((item) => item.email === email.toLowerCase())) throw new ApiError(409, "Já existe uma conta com este e-mail.");
+          const created = await auth.createUser({ name, email, password: body.password, role: "assistant" });
+          await auth.audit({ userId: user.id, action: "USER_CREATED_BY_ADMIN", resource: `user:${created.id}` });
+          sendJson(response, 201, { user: created });
+          return;
+        }
         if (request.method === "GET" && pathname === "/api/tracking/providers") {
           sendJson(response, 200, { providers: tracking.providers() });
           return;
