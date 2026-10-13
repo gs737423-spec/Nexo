@@ -185,7 +185,7 @@
   .detail-grid { display:grid; grid-template-columns:minmax(0,1fr) 320px; gap:20px; }
   .upload-fields { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:20px; }
   .table-scroll { overflow-x:auto; }
-  .table-min-width { min-width:820px; }
+  .table-min-width { min-width:1080px; }
   .data-table .table-header > div, .data-table .invoice-row > div { text-align:center; }
   .data-table .invoice-row > div:nth-child(2) { text-align:center; }
   .data-table .invoice-row > div:nth-child(4) { display:flex; justify-content:center; }
@@ -304,8 +304,6 @@
   .invoice-fact-value { min-width:0; overflow-wrap:anywhere; word-break:break-word; }
   .invoice-fact-value.copyable { display:block; max-width:100%; }
   .invoice-fact-value.access-key { font-size:12px !important; line-height:1.35; letter-spacing:.01em; }
-  .stage-group-header { display:flex; align-items:baseline; justify-content:space-between; gap:12px; padding:16px 20px 8px; color:#EDE7F0; background:#111012; border-top:1px solid #2B282E; font-size:11px; font-weight:800; letter-spacing:.03em; text-transform:uppercase; }
-  .stage-group-header small { color:#8E8596; font-size:10px; font-weight:600; text-transform:none; letter-spacing:0; }
   @media (max-width:540px) { .invoice-facts-grid { grid-template-columns:1fr; gap:12px; } .invoice-fact-wide { grid-column:auto; } }
   html[data-theme="dark"] .detail-edit-input, html[data-theme="dark"] .detail-edit-input:-webkit-autofill, html[data-theme="dark"] .detail-edit-input:-webkit-autofill:hover, html[data-theme="dark"] .detail-edit-input:-webkit-autofill:focus { background:#17131B !important; background-color:#17131B !important; color:#F7F4FA !important; -webkit-text-fill-color:#F7F4FA !important; border-color:#51465A !important; box-shadow:0 0 0 1000px #17131B inset !important; caret-color:#F7F4FA; }
   html[data-theme="dark"] .detail-edit-input:focus { border-color:#A717F4 !important; box-shadow:0 0 0 3px rgba(167,23,244,.14) !important; }
@@ -336,7 +334,7 @@
   .rca-invoice-row > div:first-child { font-size:12px !important; }
   @media (max-width:700px) { .stage-update { align-items:stretch; } .stage-copy { width:100%; } .stage-options { flex-basis:100%; } .stage-note { min-width:0; } .stage-save { flex:1 1 auto; } }
   /* Editorial type and table grid: one deliberate system across the product. */
-  :root { --invoice-grid:repeat(7,minmax(0,1fr)); }
+  :root { --invoice-grid:150px minmax(180px,1.5fr) minmax(170px,1.35fr) minmax(118px,1fr) minmax(90px,.8fr) minmax(90px,.8fr) minmax(100px,.85fr); }
   html, body, #root, #root input, #root select, #root textarea { font-family:'Sora',system-ui,sans-serif !important; font-weight:600; }
   #root h1, #root h2, #root h3, #root nav, #root button, #root .kpi-value { font-family:'Sora',system-ui,sans-serif !important; }
   #root h1 { font-size:28px !important; line-height:1.08 !important; font-weight:800 !important; letter-spacing:-.04em !important; }
@@ -349,6 +347,7 @@
   #root .table-header > div, #root .table-header > button, #root .invoice-row > div { text-align:left !important; }
   #root .invoice-row > :nth-child(n+1) { text-align:left !important; }
   #root .table-header > *, #root .invoice-row > * { justify-self:start; }
+  #root .invoice-row > div { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   #root .data-table .invoice-row > div:nth-child(4) { justify-content:flex-start !important; }
   #root .invoice-row > div:first-child { font-weight:800 !important; letter-spacing:-.015em !important; font-variant-numeric:tabular-nums; }
   #root .invoice-row > div:nth-child(2) { font-weight:700 !important; }
@@ -363,7 +362,7 @@
   html[data-theme="dark"] .invoice-row:hover { background:rgba(161,0,255,.075) !important; }
   html[data-theme="dark"] .kpi-card .kpi-label { font-size:11px !important; font-weight:700 !important; letter-spacing:.015em !important; }
   html[data-theme="dark"] .kpi-card .kpi-value { font-size:32px !important; font-weight:800 !important; letter-spacing:-.045em !important; }
-  @media (max-width:900px) { #root .table-min-width { min-width:920px; } }
+  @media (max-width:900px) { #root .table-min-width { min-width:1080px; } }
 </style>
 </head>
 <body>
@@ -600,11 +599,8 @@ function computeRows(){
   return filtered;
 }
 
-var STAGE_ORDER={OCORRENCIA:0,ATRASADO:1,AGUARDANDO_COLETA:2,COLETADO:3,EM_TRANSITO:4,UNIDADE_DESTINO:5,SAIU_PARA_ENTREGA:6,ENTREGUE:7};
+var STAGE_ORDER={AGUARDANDO_COLETA:0,COLETADO:1,EM_TRANSITO:2,UNIDADE_DESTINO:3,SAIU_PARA_ENTREGA:4,ATRASADO:5,OCORRENCIA:6,ENTREGUE:7};
 function stageRank(status){ return STAGE_ORDER[status]===undefined?8:STAGE_ORDER[status]; }
-function stageMeta(status){
-  return {OCORRENCIA:{key:'attention',label:'Problemas para resolver'},ATRASADO:{key:'attention',label:'Atrasadas'},AGUARDANDO_COLETA:{key:'aguardando',label:'Aguardando coleta'},COLETADO:{key:'coletado',label:'Coletadas'},EM_TRANSITO:{key:'transito',label:'Em trânsito'},UNIDADE_DESTINO:{key:'destino',label:'Na unidade de destino'},SAIU_PARA_ENTREGA:{key:'saiu',label:'Saiu para entrega'},ENTREGUE:{key:'entregue',label:'Entregues'}}[status]||{key:'other',label:'Sem etapa definida'};
-}
 
 function renderDashboard(){
   var dark=state.theme==='dark';
@@ -644,14 +640,10 @@ function renderDashboard(){
     (hasActiveFilters?'<button onclick="window.clearFilters()" style="padding:10px 12px;border:1px solid #DDE5F0;border-radius:10px;background:#fff;color:#526078;font-size:12px;font-weight:700">Limpar</button>':'')+
   '</div>';
 
-  var rows=computeRows(), stageCounts={};
-  rows.forEach(function(inv){ var meta=stageMeta(inv.status); stageCounts[meta.key]=(stageCounts[meta.key]||0)+1; });
-  var lastStageKey='';
+  var rows=computeRows();
   var rowsHtml=rows.map(function(inv){
     var c=getCarrier(inv.carrierId), s=themedStatus(inv.status,SC[inv.status]||SC.SEM_INFORMACAO), due=deadlineInfo(inv.eta), dueStyle=state.theme==='dark'?'background:'+due.bg+';color:'+due.color:'color:'+(due.key==='late'?'#B42318':due.key==='today'?'#B54708':due.key==='soon'?'#1769E0':'#027A48');
-    var meta=stageMeta(inv.status), groupHeader='';
-    if(meta.key!==lastStageKey){ lastStageKey=meta.key; groupHeader='<div class="stage-group-header"><span>'+esc(meta.label)+'</span><small>'+stageCounts[meta.key]+' nota'+(stageCounts[meta.key]===1?'':'s')+'</small></div>'; }
-    return groupHeader+'<div class="invoice-row invoice-table-grid" onclick="window.goToDetail('+inv.id+')" style="display:grid;height:61px;padding:10px 20px;border-bottom:1px solid #F3F4F6;cursor:pointer;align-items:center;gap:12px;overflow:hidden" onmouseover="this.style.background=state.theme===\'dark\'?\'#1C181F\':\'#F9FAFB\'" onmouseout="this.style.background=\'\'">'+
+    return '<div class="invoice-row invoice-table-grid" onclick="window.goToDetail('+inv.id+')" style="display:grid;height:61px;padding:10px 20px;border-bottom:1px solid #F3F4F6;cursor:pointer;align-items:center;gap:12px;overflow:hidden" onmouseover="this.style.background=state.theme===\'dark\'?\'#1C181F\':\'#F9FAFB\'" onmouseout="this.style.background=\'\'">'+
       '<div style="font-size:13px;font-weight:700">'+esc(inv.nf)+'</div>'+
       '<div style="font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+esc(inv.recipient)+'</div>'+
       '<div style="font-size:12.5px;font-weight:500;color:#667085;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+esc(c.name)+'</div>'+
