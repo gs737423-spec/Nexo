@@ -348,6 +348,8 @@
   #root .invoice-row { grid-template-columns:var(--invoice-grid) !important; min-width:0; font-size:13px !important; line-height:1.3 !important; font-weight:600 !important; }
   #root .table-header > div, #root .table-header > button, #root .invoice-row > div { text-align:left !important; }
   #root .invoice-row > :nth-child(n+1) { text-align:left !important; }
+  #root .table-header > *, #root .invoice-row > * { justify-self:start; }
+  #root .data-table .invoice-row > div:nth-child(4) { justify-content:flex-start !important; }
   #root .invoice-row > div:first-child { font-weight:800 !important; letter-spacing:-.015em !important; font-variant-numeric:tabular-nums; }
   #root .invoice-row > div:nth-child(2) { font-weight:700 !important; }
   #root .invoice-row > div:nth-child(3), #root .invoice-row > div:nth-child(6), #root .invoice-row > div:nth-child(7) { font-weight:500 !important; color:#AAA1B0 !important; }
