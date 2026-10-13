@@ -371,7 +371,7 @@
 <script>
 "use strict";
 
-var state = { loggedIn:false, screen:'dashboard', selectedId:null, clientKey:'', vendorKey:'', editingDetail:false, search:'', filter:'all', filterExpanded:false, carrierFilter:'all', deadlineFilter:'all', sortDirection:'asc', uploadStep:'idle', processingStep:0, uploadData:null, dragOver:false, session:null, users:[], apiError:'', accountMenu:false, loginLoading:false, showPassword:false, report:null, manualStatus:null, theme:'dark' };
+var state = { loggedIn:false, screen:'dashboard', selectedId:null, clientKey:'', vendorKey:'', editingDetail:false, search:'', filter:'all', filterExpanded:false, carrierFilter:'all', deadlineFilter:'all', sortDirection:'asc', uploadStep:'idle', processingStep:0, uploadData:null, dragOver:false, session:null, users:[], apiError:'', accountMenu:false, loginLoading:false, showPassword:false, report:null, manualStatus:null, statusSaving:false, theme:'dark' };
 if(typeof document!=='undefined'&&document.documentElement) document.documentElement.dataset.theme=state.theme;
 
 var carriers = [];
@@ -785,7 +785,7 @@ function renderDetail(){
     '<input id="manualStatus" type="hidden" value="'+esc(selectedManualStatus)+'">'+
     '<div class="stage-options">'+stageOptions+'</div>'+
     '<input id="manualNote" class="stage-note" maxlength="300" aria-label="Observação da atualização" placeholder="Adicionar observação">'+
-    '<button class="stage-save" onclick="window.updateManualStatus()">Salvar atualização</button>'+
+    '<button class="stage-save" '+(state.statusSaving?'disabled aria-busy="true"':'')+' onclick="window.updateManualStatus()">'+(state.statusSaving?'Salvando…':'Salvar atualização')+'</button>'+
   '</section>';
 
   if(isAlert){
@@ -966,12 +966,17 @@ window.refreshTracking=async function(){
   } catch(error) { state.apiError=error.message; render(); }
 };
 window.updateManualStatus=async function(){
+  if(state.statusSaving) return;
   var index=-1; for(var i=0;i<invoices.length;i++) if(invoices[i].id===state.selectedId) index=i;
   if(index<0) return;
   var status=fieldValue('manualStatus','');
   var note=fieldValue('manualNote','');
-  try { state.apiError=''; var invoice=await api('/invoices/'+state.selectedId+'/status',jsonOptions({status:status,note:note})); invoices[index]=invoice; state.manualStatus=null; render(); }
-  catch(error) { state.apiError=error.message; render(); }
+  if(!status) return;
+  state.statusSaving=true;
+  render();
+  try { state.apiError=''; var invoice=await api('/invoices/'+state.selectedId+'/status',jsonOptions({status:status,note:note})); invoices[index]=invoice; state.manualStatus=null; }
+  catch(error) { state.apiError=error.message; }
+  finally { state.statusSaving=false; render(); }
 };
 window.deleteInvoice=async function(){
   var inv=invoices.find(function(item){ return item.id===state.selectedId; });
