@@ -304,6 +304,8 @@
   .invoice-fact-value { min-width:0; overflow-wrap:anywhere; word-break:break-word; }
   .invoice-fact-value.copyable { display:block; max-width:100%; }
   .invoice-fact-value.access-key { font-size:12px !important; line-height:1.35; letter-spacing:.01em; }
+  .stage-group-header { display:flex; align-items:baseline; justify-content:space-between; gap:12px; padding:16px 20px 8px; color:#EDE7F0; background:#111012; border-top:1px solid #2B282E; font-size:11px; font-weight:800; letter-spacing:.03em; text-transform:uppercase; }
+  .stage-group-header small { color:#8E8596; font-size:10px; font-weight:600; text-transform:none; letter-spacing:0; }
   @media (max-width:540px) { .invoice-facts-grid { grid-template-columns:1fr; gap:12px; } .invoice-fact-wide { grid-column:auto; } }
   html[data-theme="dark"] .detail-edit-input, html[data-theme="dark"] .detail-edit-input:-webkit-autofill, html[data-theme="dark"] .detail-edit-input:-webkit-autofill:hover, html[data-theme="dark"] .detail-edit-input:-webkit-autofill:focus { background:#17131B !important; background-color:#17131B !important; color:#F7F4FA !important; -webkit-text-fill-color:#F7F4FA !important; border-color:#51465A !important; box-shadow:0 0 0 1000px #17131B inset !important; caret-color:#F7F4FA; }
   html[data-theme="dark"] .detail-edit-input:focus { border-color:#A717F4 !important; box-shadow:0 0 0 3px rgba(167,23,244,.14) !important; }
@@ -442,7 +444,7 @@ async function api(path, options){
   return payload;
 }
 function jsonOptions(body){ return {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}; }
-window.openInvoiceDocument=async function(id,event){ if(event){event.preventDefault();event.stopPropagation();} var tab=window.open('about:blank','_blank'); try { var headers={}; if(state.session&&state.session.token) headers.Authorization='Bearer '+state.session.token; var response=await fetch('/api/invoices/'+id+'/document',{headers:headers}); if(!response.ok){ var detail='Não foi possível abrir o documento.'; try { var payload=await response.json(); if(payload&&payload.error) detail=payload.error; } catch(ignore) {} throw new Error(detail); } var blob=await response.blob(); var url=URL.createObjectURL(blob); if(tab){tab.location.href=url;} else {window.location.href=url;} setTimeout(function(){URL.revokeObjectURL(url);},60000); } catch(error){ if(tab) tab.close(); state.apiError=error.message.indexOf('não possui')>=0?error.message:'Não foi possível abrir o documento original. Verifique se o PDF/XML foi anexado novamente.'; render(); } };
+window.openInvoiceDocument=async function(id,event){ if(event){event.preventDefault();event.stopPropagation();} var tab=window.open('about:blank','_blank'); try { var headers={}; if(state.session&&state.session.token) headers.Authorization='Bearer '+state.session.token; var response=await fetch('/api/invoices/'+id+'/document',{headers:headers}); if(!response.ok){ var detail='Não foi possível abrir o documento.'; try { var payload=await response.json(); if(payload&&payload.error) detail=payload.error; } catch(ignore) {} throw new Error(detail); } var blob=await response.blob(); var url=URL.createObjectURL(blob); if(tab){tab.location.href=url;} else {window.location.href=url;} setTimeout(function(){URL.revokeObjectURL(url);},60000); } catch(error){ if(tab) tab.close(); state.apiError=error.message||'Não foi possível abrir o documento original.'; render(); } };
 function fieldValue(id, fallback){ var field=document.getElementById(id); return field ? field.value : fallback; }
 function readFileAsBase64(file){
   return new Promise(function(resolve,reject){
@@ -583,6 +585,8 @@ function computeRows(){
   if(state.carrierFilter!=='all') filtered=filtered.filter(function(i){ return getCarrier(i.carrierId).name===state.carrierFilter; });
   var unique={}; filtered=filtered.filter(function(i){ var key=(i.nf||'')+'|'+(i.recipientDoc||'')+'|'+(i.recipient||'').trim().toLowerCase(); if(unique[key]) return false; unique[key]=true; return true; });
   filtered.sort(function(a,b){
+    var ar=stageRank(a.status), br=stageRank(b.status);
+    if(ar!==br) return ar-br;
     var ad=a.eta?new Date(a.eta+'T00:00:00').getTime():null;
     var bd=b.eta?new Date(b.eta+'T00:00:00').getTime():null;
     if(ad===null && bd!==null) return 1;
@@ -592,6 +596,12 @@ function computeRows(){
     return state.sortDirection==='desc' ? bd-ad : ad-bd;
   });
   return filtered;
+}
+
+var STAGE_ORDER={OCORRENCIA:0,ATRASADO:1,AGUARDANDO_COLETA:2,COLETADO:3,EM_TRANSITO:4,UNIDADE_DESTINO:5,SAIU_PARA_ENTREGA:6,ENTREGUE:7};
+function stageRank(status){ return STAGE_ORDER[status]===undefined?8:STAGE_ORDER[status]; }
+function stageMeta(status){
+  return {OCORRENCIA:{key:'attention',label:'Problemas para resolver'},ATRASADO:{key:'attention',label:'Atrasadas'},AGUARDANDO_COLETA:{key:'aguardando',label:'Aguardando coleta'},COLETADO:{key:'coletado',label:'Coletadas'},EM_TRANSITO:{key:'transito',label:'Em trânsito'},UNIDADE_DESTINO:{key:'destino',label:'Na unidade de destino'},SAIU_PARA_ENTREGA:{key:'saiu',label:'Saiu para entrega'},ENTREGUE:{key:'entregue',label:'Entregues'}}[status]||{key:'other',label:'Sem etapa definida'};
 }
 
 function renderDashboard(){
@@ -632,17 +642,21 @@ function renderDashboard(){
     (hasActiveFilters?'<button onclick="window.clearFilters()" style="padding:10px 12px;border:1px solid #DDE5F0;border-radius:10px;background:#fff;color:#526078;font-size:12px;font-weight:700">Limpar</button>':'')+
   '</div>';
 
-  var rows=computeRows();
+  var rows=computeRows(), stageCounts={};
+  rows.forEach(function(inv){ var meta=stageMeta(inv.status); stageCounts[meta.key]=(stageCounts[meta.key]||0)+1; });
+  var lastStageKey='';
   var rowsHtml=rows.map(function(inv){
     var c=getCarrier(inv.carrierId), s=themedStatus(inv.status,SC[inv.status]||SC.SEM_INFORMACAO), due=deadlineInfo(inv.eta), dueStyle=state.theme==='dark'?'background:'+due.bg+';color:'+due.color:'color:'+(due.key==='late'?'#B42318':due.key==='today'?'#B54708':due.key==='soon'?'#1769E0':'#027A48');
-    return '<div class="invoice-row invoice-table-grid" onclick="window.goToDetail('+inv.id+')" style="display:grid;height:61px;padding:10px 20px;border-bottom:1px solid #F3F4F6;cursor:pointer;align-items:center;gap:12px;overflow:hidden" onmouseover="this.style.background=state.theme===\'dark\'?\'#1C181F\':\'#F9FAFB\'" onmouseout="this.style.background=\'\'">'+
+    var meta=stageMeta(inv.status), groupHeader='';
+    if(meta.key!==lastStageKey){ lastStageKey=meta.key; groupHeader='<div class="stage-group-header"><span>'+esc(meta.label)+'</span><small>'+stageCounts[meta.key]+' nota'+(stageCounts[meta.key]===1?'':'s')+'</small></div>'; }
+    return groupHeader+'<div class="invoice-row invoice-table-grid" onclick="window.goToDetail('+inv.id+')" style="display:grid;height:61px;padding:10px 20px;border-bottom:1px solid #F3F4F6;cursor:pointer;align-items:center;gap:12px;overflow:hidden" onmouseover="this.style.background=state.theme===\'dark\'?\'#1C181F\':\'#F9FAFB\'" onmouseout="this.style.background=\'\'">'+
       '<div style="font-size:13px;font-weight:700">'+esc(inv.nf)+'</div>'+
       '<div style="font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+esc(inv.recipient)+'</div>'+
       '<div style="font-size:12.5px;font-weight:500;color:#667085;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+esc(c.name)+'</div>'+
       '<div><span style="display:inline-block;padding:3px 10px;border-radius:99px;font-size:11.5px;font-weight:600;background:'+s.bg+';color:'+s.color+'">'+s.label+'</span></div>'+
       '<div><span style="display:inline-block;padding:3px 8px;border-radius:999px;font-size:11.5px;font-weight:700;'+dueStyle+'">'+(inv.eta?fmtShort(inv.eta):'—')+'</span></div>'+
       '<div style="font-size:12.5px;font-weight:500;color:#667085">'+timeAgo(inv.lastCheck)+'</div>'+
-      '<div style="font-size:12.5px;font-weight:500;color:#667085">'+esc(inv.uploadedBy||inv.by)+'</div>'+
+      '<div style="font-size:12.5px;font-weight:500;color:#667085">'+esc(inv.uploadedBy||inv.by)+'</div>'+ 
     '</div>';
   }).join('') || '<div style="padding:40px 20px;text-align:center;color:#667085;font-size:13px">Nenhuma entrega encontrada.</div>';
 
@@ -799,7 +813,7 @@ function renderDetail(){
         (state.editingDetail?'<div><div style="font-size:11px;color:#667085">Data prevista</div><input id="editEta" type="date" value="'+esc(inv.eta||'')+'" style="width:100%;padding:7px 9px;border:1px solid #DDE5F0;border-radius:8px;font-size:13px"></div>':kv2('Data prevista',inv.eta?fmtDate(inv.eta):'Não informada'))+
         kvCopy('Número',inv.nf)+kvCopyWide('Chave DANFE',inv.accessKey||'')+kv2('Emissão',fmtDate(inv.issued))+kv2Wide('Emissor',inv.issuer||'Não identificado')+kv2('Valor',fmtCurrency(inv.value),true)+kv2('Enviada por',inv.uploadedBy||inv.by||'Não identificado')+kv2('Enviada em',inv.uploadedAt?fmtDateTime(inv.uploadedAt):'Data anterior não registrada')+
         (state.editingDetail?'<div style="grid-column:1/-1"><button onclick="window.saveDetailEdit()" style="padding:8px 12px;border:0;border-radius:8px;background:#1769E0;color:#fff;font-size:12px;font-weight:700">Salvar dados</button></div>':'')+
-        '<div style="grid-column:1/-1;margin-top:4px"><a href="/api/invoices/'+inv.id+'/document" onclick="window.openInvoiceDocument('+inv.id+',event)" style="display:inline-flex;align-items:center;gap:7px;padding:9px 12px;border:1px solid #DDE5F0;border-radius:9px;color:#1769E0;font-size:12px;font-weight:700">Abrir PDF/XML original</a></div>'+ 
+        (inv.documentAvailable===false?'<div style="grid-column:1/-1;margin-top:4px;padding:10px 12px;border:1px dashed #4A424E;border-radius:9px;color:#A9A2AF;font-size:12px;line-height:1.45">Arquivo original não está salvo nesta nota. Reanexe o PDF/XML para disponibilizá-lo novamente.</div>':'<div style="grid-column:1/-1;margin-top:4px"><a href="/api/invoices/'+inv.id+'/document" onclick="window.openInvoiceDocument('+inv.id+',event)" style="display:inline-flex;align-items:center;gap:7px;padding:9px 12px;border:1px solid #DDE5F0;border-radius:9px;color:#1769E0;font-size:12px;font-weight:700">Abrir PDF/XML original</a></div>')+
       '</div>')+
       section('Destinatário','<div style="display:flex;flex-direction:column;gap:10px">'+
         kvLink('Nome',inv.recipient,"window.goToClient('"+esc(inv.recipient).replace(/'/g,"\\'")+"')")+kvCopy('CNPJ/CPF',inv.recipientDoc)+kv2('Cidade/UF',inv.city+'/'+inv.state)+

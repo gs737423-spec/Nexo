@@ -398,7 +398,7 @@ function createNexoServer(options = {}) {
         // Document content is fetched only on demand. Keeping base64 PDFs out of
         // the bootstrap response avoids leaking large files to every screen and
         // keeps the initial load fast.
-        bootstrapStore.invoices = (bootstrapStore.invoices || []).map(({ document, ...invoice }) => invoice);
+        bootstrapStore.invoices = (bootstrapStore.invoices || []).map(({ document, ...invoice }) => ({ ...invoice, documentAvailable: Boolean(document?.content) }));
         sendJson(response, 200, { ...bootstrapStore, carriers: store.carriers.map(withCarrierProfile), user: { ...user, reportsAccess: canViewReports(user) } });
         return;
       }
