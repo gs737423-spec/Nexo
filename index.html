@@ -926,7 +926,17 @@ window.goToVendor=function(key,fromPop){ state.vendorKey=key; state.screen='vend
 window.goToRcas=function(fromPop){ state.screen='rcas'; if(!fromPop) pushAppHistory('rcas'); render(); };
 if (window.addEventListener) window.addEventListener('popstate',function(event){ var s=event.state||{}; if(!state.loggedIn) return; if(s.screen==='detail') window.goToDetail(s.extra&&s.extra.id,true); else if(s.screen==='client') window.goToClient(s.extra&&s.extra.key,true); else if(s.screen==='vendor') window.goToVendor(s.extra&&s.extra.key,true); else if(s.screen==='rcas') window.goToRcas(true); else if(s.screen==='upload') window.goToUpload(true); else if(s.screen==='reports') window.goToReports(true); else if(s.screen==='users') window.goToUsers(true); else window.goToDashboard(true); });
 window.toggleDetailEdit=function(){ state.editingDetail=!state.editingDetail; state.apiError=''; render(); };
-window.selectManualStatus=function(status){ state.manualStatus=status; state.apiError=''; render(); };
+window.selectManualStatus=function(status){
+  state.manualStatus=status;
+  state.apiError='';
+  render();
+  setTimeout(function(){
+    var control=document.querySelector('.stage-update');
+    if(control) control.scrollIntoView({behavior:'smooth',block:'center'});
+    var save=document.querySelector('.stage-save');
+    if(save) save.focus();
+  },0);
+};
 window.saveDetailEdit=async function(){
   var index=invoices.findIndex(function(item){ return item.id===state.selectedId; }); if(index<0) return;
   try {
